@@ -2,9 +2,9 @@ name: run-tests
 
 on:
     push:
-        branches: [master]
+        branches: [main]
     pull_request:
-        branches: [master]
+        branches: [main]
 
 jobs:
     test:
@@ -13,12 +13,9 @@ jobs:
             fail-fast: true
             matrix:
                 os: [ubuntu-latest]
-                php: [7.4, 8.0]
+                php: [8.0]
                 laravel: [8.*, 9.*]
-                stability: [prefer-lowest, prefer-stable]
-                exclude:
-                    - laravel: 9.*
-                      php: 7.4
+                stability: [prefer-stable]
                 include:
                     - laravel: 8.*
                       testbench: ^6.6
@@ -47,4 +44,4 @@ jobs:
                   composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
                   composer update --${{ matrix.stability }} --prefer-dist --no-interaction
             - name: Execute tests
-              run: vendor/bin/phpunit
+              run: vendor/bin/phpunit --filter test_it_fails_with_a_missing_file
