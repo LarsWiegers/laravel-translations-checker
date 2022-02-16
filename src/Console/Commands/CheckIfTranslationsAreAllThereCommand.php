@@ -158,6 +158,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         $languagesWhereFileIsMissing = [];
 
         foreach($languages as $language) {
+            dump(File::exists($baseDirectory . '/' . $language . '/' . $fileName), $languages, $fileName, $baseDirectory);
             if(! File::exists($baseDirectory . '/' . $language . '/' . $fileName)) {
                 $languagesWhereFileIsMissing[] = $language;
             }
