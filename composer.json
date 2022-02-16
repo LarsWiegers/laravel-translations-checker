@@ -1,0 +1,54 @@
+{
+    "name": "larswiegers/laravel-translations-checker",
+    "description": "Make sure your laravel translations are checked and are included in all languages.",
+    "keywords": [
+        "larswiegers",
+        "laravel-translations-checker"
+    ],
+    "homepage": "https://github.com/larswiegers/laravel-translations-checker",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Lars Wiegers",
+            "email": "larswiegers@live.nl",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "illuminate/support": "^8.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.0",
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Larswiegers\\LaravelTranslationsChecker\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Larswiegers\\LaravelTranslationsChecker\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Larswiegers\\LaravelTranslationsChecker\\LaravelTranslationsCheckerServiceProvider"
+            ],
+            "aliases": {
+                "LaravelTranslationsChecker": "Larswiegers\\LaravelTranslationsChecker\\LaravelTranslationsCheckerFacade"
+            }
+        }
+    }
+}
