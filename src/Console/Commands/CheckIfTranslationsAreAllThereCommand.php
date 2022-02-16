@@ -136,7 +136,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      * @param string $directory
      * @return array
      */
-    private function getLanguages(string $directory): array
+    private function getLanguages(string $directory)
     {
         $languages = [];
 
@@ -153,7 +153,13 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         return $languages;
     }
 
-    private function checkIfFileExistsForOtherLanguages($languages, $fileName, $baseDirectory): array
+    /**
+     * @param $languages
+     * @param $fileName
+     * @param $baseDirectory
+     * @return array
+     */
+    private function checkIfFileExistsForOtherLanguages($languages, $fileName, $baseDirectory)
     {
         $languagesWhereFileIsMissing = [];
 
