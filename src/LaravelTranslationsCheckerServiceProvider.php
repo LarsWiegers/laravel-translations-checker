@@ -2,6 +2,7 @@
 
 namespace Larswiegers\LaravelTranslationsChecker;
 
+use App\Console\Commands\CheckIfTranslationsAreAllThereCommand;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelTranslationsCheckerServiceProvider extends ServiceProvider
