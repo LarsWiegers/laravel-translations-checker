@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Larswiegers\LaravelTranslationsChecker\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class CheckIfTranslationsAreAllThereCommand extends Command
@@ -12,7 +13,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'translations:check';
+    protected $signature = 'translations:check {--directory=}';
 
     /**
      * The console command description.
@@ -38,28 +39,52 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      */
     public function handle()
     {
-        $directory = (app()->langPath());
+        if($this->option('directory')) {
+            $directory = $this->option('directory');
+        }else {
+            $directory = app()->langPath();
+        }
+
+        if(! $this->checkIfDirectoryExists($directory)) {
+            $this->error('The passed directory (' . $directory . ') does not exist.');
+            return 1;
+        };
 
         $realLines = [];
+        $languages = [];
+        $missingFiles = [];
+
+        $languages = $this->getLanguages($directory);
 
         if ($handle = opendir($directory)) {
 
-            while (false !== ($entry = readdir($handle))) {
-                if ($entry != "." && $entry != ".." && $entry != "vendor") {
-                    if ($handleLang = opendir(lang_path($entry))) {
+            while (false !== ($languageDir = readdir($handle))) {
+                if ($languageDir != "." && $languageDir != "..") {
+
+                    if ($handleLang = opendir($directory . '/' . $languageDir)) {
+
                         while (false !== ($langFile = readdir($handleLang))) {
                             if ($langFile != "." && $langFile != "..") {
-                                $lines = include(app()->langPath($entry . '/' . $langFile));
+
+
+                                $languagesWithMissingFile = $this->checkIfFileExistsForOtherLanguages($languages, $langFile, $directory);
+
+                                foreach($languagesWithMissingFile as $languageWithMissingFile) {
+                                    $missingFiles[] = 'The language ' . $languageWithMissingFile . ' (' . $directory . '/' . $languageWithMissingFile . ') is missing the file ( ' . $langFile. ' )';
+                                }
+
+                                $lines = include($directory . '/' . $languageDir . '/' . $langFile);
+
 
                                 $fileName = str_replace(".php", "", $langFile);
 
                                 foreach ($lines as $index => $line) {
                                     if (is_array($line)) {
                                         foreach ($line as $index2 => $line2) {
-                                            $realLines[$entry . '.' . $fileName . '.' . $index . '.' . $index2] = $line2;
+                                            $realLines[$languageDir . '.' . $fileName . '.' . $index . '.' . $index2] = $line2;
                                         }
                                     } else {
-                                        $realLines[$entry . '.' . $fileName . '.' . $index] = $line;
+                                        $realLines[$languageDir . '.' . $fileName . '.' . $index] = $line;
                                     }
                                 }
                             }
@@ -72,29 +97,72 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             closedir($handle);
 
             $missing = [];
-
             foreach($realLines as $key => $line) {
-                if(Str::startsWith($key, 'en.')) {
-                    $withoutLocale = Str::replaceFirst('en.', '', $key);
-                    $exists = array_key_exists('nl.' . $withoutLocale, $realLines);
-                    if(!$exists) {
-                       $missing[] = 'nl.' . $withoutLocale;
-                    }
-                }
 
-                if(Str::startsWith($key, 'nl.')) {
-                    $withoutLocale = Str::replaceFirst('nl.', '', $key);
-                    $exists = array_key_exists('en.' . $withoutLocale, $realLines);
+                $withoutLocale = strstr($key, '.', false);
+
+                foreach($languages as $language) {
+                    $exists = array_key_exists($language . $withoutLocale, $realLines);
+
                     if(!$exists) {
-                        $missing[] = 'en.' . $withoutLocale;
+                        $missing[] = $language . $withoutLocale;
                     }
                 }
             }
         }
+
+        foreach($missingFiles as $missingFile) {
+            $this->error($missingFile);
+        }
+
+
         foreach($missing as $missingTranslation) {
             $this->error('Missing the translation with key: ' . $missingTranslation);
         }
 
         return count($missing) > 0 ? 1 : 0;
+    }
+
+    /**
+     * @param string $directory
+     * @return bool
+     */
+    private function checkIfDirectoryExists(string $directory): bool
+    {
+        return File::exists($directory);
+    }
+
+    /**
+     * @param string $directory
+     * @return array
+     */
+    private function getLanguages(string $directory): array
+    {
+        $languages = [];
+
+        if ($handle = opendir($directory)) {
+            while (false !== ($languageDir = readdir($handle))) {
+                if ($languageDir != "." && $languageDir != "..") {
+                    $languages[] = $languageDir;
+                }
+            }
+        }
+
+        closedir($handle);
+
+        return $languages;
+    }
+
+    private function checkIfFileExistsForOtherLanguages($languages, $fileName, $baseDirectory): array
+    {
+        $languagesWhereFileIsMissing = [];
+
+        foreach($languages as $language) {
+            if(! File::exists($baseDirectory . '/' . $language . '/' . $fileName)) {
+                $languagesWhereFileIsMissing[] = $language;
+            }
+        }
+
+        return $languagesWhereFileIsMissing;
     }
 }
