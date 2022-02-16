@@ -20,7 +20,7 @@
     </coverage>
     <testsuites>
         <testsuite name="Unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
+            <directory suffix="Test.php">./tests/Tests/Unit</directory>
         </testsuite>
     </testsuites>
     <php>

@@ -1,11 +1,12 @@
-# Very short description of the package
+# Laravel translations checker
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/larswiegers/laravel-translations-checker.svg?style=flat-square)](https://packagist.org/packages/larswiegers/laravel-translations-checker)
 [![Total Downloads](https://img.shields.io/packagist/dt/larswiegers/laravel-translations-checker.svg?style=flat-square)](https://packagist.org/packages/larswiegers/laravel-translations-checker)
 ![GitHub Actions](https://github.com/larswiegers/laravel-translations-checker/actions/workflows/main.yml/badge.svg)
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
+Ever feel that you are missing translations in some languages you support? Get users emailing you about weird strings on their screen?
 
+Use the laravel translation checker and get direct feedback where and what translations you are missing!
 ## Installation
 
 You can install the package via composer:
@@ -17,9 +18,14 @@ composer require larswiegers/laravel-translations-checker
 ## Usage
 
 ```php
-// Usage description here
+php artisan translations:check
 ```
 
+Are your translations in a weird directory? use the --directory option like this:
+
+```php
+php artisan translations:check --directory=resources/lang
+```
 ### Testing
 
 ```bash
@@ -46,7 +52,3 @@ If you discover any security related issues, please email larswiegers@live.nl in
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-## Laravel Package Boilerplate
-
-This package was generated using the [Laravel Package Boilerplate](https://laravelpackageboilerplate.com).
