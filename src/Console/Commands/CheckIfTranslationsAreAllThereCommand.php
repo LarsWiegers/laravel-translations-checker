@@ -119,7 +119,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         foreach($missing as $missingTranslation) {
             $this->error('Missing the translation with key: ' . $missingTranslation);
         }
-
+        dd($missing);
         return count($missing) > 0 ? 1 : 0;
     }
 
