@@ -26,6 +26,16 @@ Are your translations in a weird directory? use the --directory option like this
 ```php
 php artisan translations:check --directory=resources/lang
 ```
+
+### What does the output look like?
+```
+The language nl (resources/lang/nl) is missing the file ( passwords.php )
+Missing the translation with key: nl.passwords.reset
+Missing the translation with key: nl.passwords.sent
+Missing the translation with key: nl.passwords.throttled
+Missing the translation with key: nl.passwords.token
+Missing the translation with key: nl.passwords.user
+```
 ### Testing
 
 ```bash
