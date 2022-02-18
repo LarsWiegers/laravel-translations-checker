@@ -91,7 +91,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                                 $languagesWithMissingFile = $this->checkIfFileExistsForOtherLanguages($languages, $langFile, $directory);
 
                                 foreach ($languagesWithMissingFile as $languageWithMissingFile) {
-                                    if ($this->isDirInExcludedDirectories($languageDir)) {
+                                    if ($this->isDirInExcludedDirectories($languageWithMissingFile)) {
                                         continue;
                                     }
 
