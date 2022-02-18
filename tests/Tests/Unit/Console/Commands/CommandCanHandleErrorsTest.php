@@ -42,4 +42,25 @@ final class CommandCanHandleErrorsTest extends TestCase
 
         $command->assertExitCode(1);
     }
+
+
+    public function test_we_handle_if_the_dir_does_not_exist()
+    {
+        $command = $this->artisan('translations:check', [
+            '--directory' => $this->basicDir . 'zero_missing_keys',
+            '--excludedDirectories' => 'this_dir_does_not_exist'
+        ]);
+
+        $command->assertExitCode(0);
+    }
+
+    public function test_we_handle_empty_excluded_directories()
+    {
+        $command = $this->artisan('translations:check', [
+            '--directory' => $this->basicDir . 'zero_missing_keys',
+            '--excludedDirectories' => ''
+        ]);
+
+        $command->assertExitCode(0);
+    }
 }

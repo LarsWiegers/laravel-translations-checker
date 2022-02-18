@@ -84,4 +84,28 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
 
         $command->assertExitCode(0);
     }
+
+    public function test_we_can_exclude_an_directory()
+    {
+        $command = $this->artisan('translations:check', [
+            '--directory' => $this->basicDir . 'zero_missing_keys',
+            '--excludedDirectories' => 'nl'
+        ]);
+
+        $command->expectsOutput('✔ All translations are okay!');
+
+        $command->assertExitCode(0);
+    }
+
+    public function test_we_can_exclude_two_directories()
+    {
+        $command = $this->artisan('translations:check', [
+            '--directory' => $this->basicDir . 'zero_missing_keys',
+            '--excludedDirectories' => 'nl,en'
+        ]);
+
+        $command->expectsOutput('✔ All translations are okay!');
+
+        $command->assertExitCode(0);
+    }
 }
