@@ -63,4 +63,14 @@ final class CommandCanHandleErrorsTest extends TestCase
 
         $command->assertExitCode(0);
     }
+
+    public function test_we_can_go_in_sub_directories()
+    {
+        $command = $this->artisan('translations:check', [
+            '--directory' => $this->basicDir . 'zero_missing_keys',
+            '--excludedDirectories' => ''
+        ]);
+
+        $command->assertExitCode(0);
+    }
 }

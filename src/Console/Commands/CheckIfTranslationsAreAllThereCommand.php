@@ -5,6 +5,8 @@ namespace Larswiegers\LaravelTranslationsChecker\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class CheckIfTranslationsAreAllThereCommand extends Command
 {
@@ -66,49 +68,33 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         if (!$this->checkIfDirectoryExists($directory)) {
             $this->error('The passed directory (' . $directory . ') does not exist.');
             return 1;
-        };
-
-        $this->realLines = [];
-        $missingFiles = [];
+        }
 
         $languages = $this->getLanguages($directory);
+        $missingFiles = [];
+        $this->realLines = [];
 
-        if ($handle = opendir($directory)) {
+        $path = $directory;
+        $rdi = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME);
+        foreach (new RecursiveIteratorIterator($rdi, RecursiveIteratorIterator::SELF_FIRST) as $langFile => $info) {
 
-            while (false !== ($languageDir = readdir($handle))) {
-                if ($languageDir != "." && $languageDir != "..") {
+            if (!File::isDirectory($langFile) && !Str::endsWith($langFile, '.txt')) {
+                $fileName = Str::afterLast($langFile, "/");
+                $languageDir = Str::replace($fileName, "", $langFile);
 
-                    if ($this->isDirInExcludedDirectories($languageDir)) {
+                $languagesWithMissingFile = $this->checkIfFileExistsForOtherLanguages($languages, $langFile, $directory);
+
+                foreach ($languagesWithMissingFile as $languageWithMissingFile) {
+                    if ($this->isDirInExcludedDirectories($languageWithMissingFile)) {
                         continue;
                     }
 
-                    if ($handleLang = opendir($directory . '/' . $languageDir)) {
-
-                        while (false !== ($langFile = readdir($handleLang))) {
-                            if ($langFile != "." && $langFile != ".." && !Str::endsWith($langFile, '.txt')) {
-
-
-                                $languagesWithMissingFile = $this->checkIfFileExistsForOtherLanguages($languages, $langFile, $directory);
-
-                                foreach ($languagesWithMissingFile as $languageWithMissingFile) {
-                                    if ($this->isDirInExcludedDirectories($languageWithMissingFile)) {
-                                        continue;
-                                    }
-
-                                    $missingFiles[] = 'The language ' . $languageWithMissingFile . ' (' . $directory . '/' . $languageWithMissingFile . ') is missing the file ( ' . $langFile . ' )';
-                                }
-
-                                $this->handleFile($directory, $languageDir, $langFile);
-                            }
-                        }
-                    }
-
-                    closedir($handleLang);
+                    $missingFiles[] = 'The language ' . $languageWithMissingFile . ' (' . $directory . '/' . $languageWithMissingFile . ') is missing the file ( ' . $langFile . ' )';
                 }
+                $this->handleFile($languageDir, $langFile);
             }
         }
 
-        closedir($handle);
 
         $missing = [];
         foreach ($this->realLines as $key => $line) {
@@ -116,6 +102,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             $withoutLocale = strstr($key, '.', false);
 
             foreach ($languages as $language) {
+                dump($language, $this->realLines);
                 $exists = array_key_exists($language . $withoutLocale, $this->realLines);
 
                 if ($this->isDirInExcludedDirectories($language)) {
@@ -123,7 +110,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                 }
 
                 if (!$exists) {
-                    $missing[] = $language . $withoutLocale;
+                    $missing[] = $language . str_replace('.php', '', $withoutLocale);
                 }
             }
         }
@@ -144,19 +131,19 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         return count($missing) > 0 ? 1 : 0;
     }
 
-    public function handleFile($directory, $languageDir, $langFile)
+    public function handleFile($languageDir, $langFile)
     {
-        $lines = include($directory . '/' . $languageDir . '/' . $langFile);
+        $lines = include($langFile);
 
-        $fileName = str_replace(".php", "", $langFile);
+        $fileName = Str::afterLast($langFile, "/");
 
         foreach ($lines as $index => $line) {
             if (is_array($line)) {
                 foreach ($line as $index2 => $line2) {
-                    $this->realLines[$languageDir . '.' . $fileName . '.' . $index . '.' . $index2] = $line2;
+                    $this->realLines[$langFile . '.' . $fileName . '.' . $index . '.' . $index2] = $line2;
                 }
             } else {
-                $this->realLines[$languageDir . '.' . $fileName . '.' . $index] = $line;
+                $this->realLines[$langFile . '.' . $fileName . '.' . $index] = $line;
             }
         }
     }
