@@ -79,7 +79,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         foreach (new RecursiveIteratorIterator($rdi, RecursiveIteratorIterator::SELF_FIRST) as $langFile => $info) {
 
             if (!File::isDirectory($langFile) && !Str::endsWith($langFile, '.txt')) {
-                $fileName = Str::afterLast($langFile, "/");
+                $fileName = basename($langFile);
                 $languageDir = Str::replace($fileName, "", $langFile);
 
                 $languagesWithMissingFile = $this->checkIfFileExistsForOtherLanguages($languages, $fileName, $directory);
@@ -101,9 +101,9 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
             foreach ($languages as $language) {
 	
-				$fileKey = Str::afterLast($key, "/");
-	
-				$exists = array_key_exists($directory . '/' .  $language . '/' . $fileKey, $this->realLines);
+				$fileKey = basename($key);
+
+				$exists = array_key_exists($directory . DIRECTORY_SEPARATOR .  $language . DIRECTORY_SEPARATOR . $fileKey, $this->realLines);
 
                 if ($this->isDirInExcludedDirectories($language)) {
                     continue;
@@ -134,7 +134,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     {
         $lines = include($langFile);
 
-        $fileName = Str::afterLast($langFile, "/");
+        $fileName = basename($langFile);
 
         foreach ($lines as $index => $line) {
             if (is_array($line)) {
