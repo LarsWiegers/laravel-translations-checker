@@ -27,12 +27,12 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     /**
      * @var array
      */
-    public $excludedDirectories;
+    public array $excludedDirectories;
 
     /**
      * @var array
      */
-    public $realLines = [];
+    public array $realLines = [];
 
     /**
      * Create a new command instance.
@@ -130,7 +130,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         return count($missing) > 0 || count($missingFiles) > 0 ? 1 : 0;
     }
 
-    public function handleFile($languageDir, $langFile)
+    public function handleFile($languageDir, $langFile): void
     {
         $lines = include($langFile);
 
@@ -160,7 +160,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      * @param string $directory
      * @return array
      */
-    private function getLanguages(string $directory)
+    private function getLanguages(string $directory): array
     {
         $languages = [];
 
@@ -183,7 +183,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      * @param $baseDirectory
      * @return array
      */
-    private function checkIfFileExistsForOtherLanguages($languages, $fileName, $baseDirectory)
+    private function checkIfFileExistsForOtherLanguages($languages, $fileName, $baseDirectory): array
     {
         $languagesWhereFileIsMissing = [];
 
