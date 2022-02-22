@@ -27,12 +27,12 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     /**
      * @var array
      */
-    public $excludedDirectories;
+    public array $excludedDirectories;
 
     /**
      * @var array
      */
-    public $realLines = [];
+    public array $realLines = [];
 
     /**
      * Create a new command instance.
@@ -57,7 +57,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             $directory = app()->langPath();
         }
 
-        if ($this->option('excludedDirectories') == 'none') {
+        if ($this->option('excludedDirectories') === 'none') {
             $this->excludedDirectories = [];
         } elseif ($this->option('excludedDirectories')) {
             $this->excludedDirectories = explode(',', $this->option('excludedDirectories'));
@@ -67,7 +67,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
         if (!$this->checkIfDirectoryExists($directory)) {
             $this->error('The passed directory (' . $directory . ') does not exist.');
-            return 1;
+            return $this::FAILURE;
         }
 
         $languages = $this->getLanguages($directory);
@@ -123,14 +123,14 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             $this->error('Missing the translation with key: ' . $missingTranslation);
         }
 
-        if (count($missingFiles) == 0 && count($missing) == 0) {
+        if (count($missingFiles) === 0 && count($missing) === 0) {
             $this->info('✔ All translations are okay!');
         }
 
-        return count($missing) > 0 || count($missingFiles) > 0 ? 1 : 0;
+        return count($missing) > 0 || count($missingFiles) > 0 ? $this::FAILURE : $this::SUCCESS;
     }
 
-    public function handleFile($languageDir, $langFile)
+    public function handleFile($languageDir, $langFile): void
     {
         $lines = include($langFile);
 
@@ -160,13 +160,13 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      * @param string $directory
      * @return array
      */
-    private function getLanguages(string $directory)
+    private function getLanguages(string $directory): array
     {
         $languages = [];
 
         if ($handle = opendir($directory)) {
             while (false !== ($languageDir = readdir($handle))) {
-                if ($languageDir != "." && $languageDir != "..") {
+                if ($languageDir !== "." && $languageDir !== "..") {
                     $languages[] = $languageDir;
                 }
             }
@@ -183,7 +183,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      * @param $baseDirectory
      * @return array
      */
-    private function checkIfFileExistsForOtherLanguages($languages, $fileName, $baseDirectory)
+    private function checkIfFileExistsForOtherLanguages($languages, $fileName, $baseDirectory): array
     {
         $languagesWhereFileIsMissing = [];
 
@@ -199,7 +199,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     private function isDirInExcludedDirectories($directoryToCheck): bool
     {
         foreach ($this->excludedDirectories as $excludedDirectory) {
-            if ($directoryToCheck == $excludedDirectory) {
+            if ($directoryToCheck === $excludedDirectory) {
                 return true;
             }
         }
