@@ -27,7 +27,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
     }
 
     /**
-     * @dataProvider zero_missing_key_provider
+     * @dataProvider two_missing_keys_provider
      *
      * @return void
      */
@@ -161,7 +161,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         ];
     }
 
-    public function two_missing_key_provider(): array
+    public function two_missing_keys_provider(): array
     {
         return [
             [$this->basicDir . 'two_missing_keys'],
