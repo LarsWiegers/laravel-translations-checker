@@ -67,7 +67,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
         if (!$this->checkIfDirectoryExists($directory)) {
             $this->error('The passed directory (' . $directory . ') does not exist.');
-            return 1;
+            return $this::FAILURE;
         }
 
         $languages = $this->getLanguages($directory);
@@ -127,7 +127,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             $this->info('✔ All translations are okay!');
         }
 
-        return count($missing) > 0 || count($missingFiles) > 0 ? 1 : 0;
+        return count($missing) > 0 || count($missingFiles) > 0 ? $this::FAILURE : $this::SUCCESS;
     }
 
     public function handleFile($languageDir, $langFile): void
