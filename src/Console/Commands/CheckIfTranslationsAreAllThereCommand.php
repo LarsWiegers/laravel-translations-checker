@@ -109,8 +109,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                     continue;
                 }
                 if (!$exists) {
-                    $fileName = Str::replace('.php', '', $fileKey);
-                    $fileName = Str::replace('.json', '', $fileName);
+                    $fileName = Str::replace(['.php', '.json'], '', $fileKey);
 
                     $missing[] = $language . '.' . $fileName;
                 }
