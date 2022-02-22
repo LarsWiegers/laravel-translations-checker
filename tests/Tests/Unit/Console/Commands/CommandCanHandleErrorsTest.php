@@ -10,6 +10,7 @@ final class CommandCanHandleErrorsTest extends TestCase
 {
 
     public $basicDir = "tests/resources/lang/basic/";
+    public $jsonDir = "tests/resources/lang/json/";
 
     public function test_it_gives_a_warning_if_the_passed_dir_is_missing()
     {
