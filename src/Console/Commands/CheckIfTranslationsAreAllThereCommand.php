@@ -109,7 +109,10 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                     continue;
                 }
                 if (!$exists) {
-                    $missing[] = $language . '.' . Str::replace('.php', '', $fileKey);
+                    $fileName = Str::replace('.php', '', $fileKey);
+                    $fileName = Str::replace('.json', '', $fileName);
+
+                    $missing[] = $language . '.' . $fileName;
                 }
             }
         }
@@ -132,9 +135,13 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
     public function handleFile($languageDir, $langFile): void
     {
-        $lines = include($langFile);
-
         $fileName = basename($langFile);
+
+        if(Str::endsWith($fileName, '.json')) {
+            $lines = json_decode(File::get($langFile), true);
+        }else {
+            $lines = include($langFile);
+        }
 
         foreach ($lines as $index => $line) {
             if (is_array($line)) {

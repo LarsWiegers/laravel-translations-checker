@@ -10,38 +10,59 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
 {
 
     public $basicDir = "tests/resources/lang/basic/";
+    public $jsonDir = "tests/resources/lang/json/";
     public $multipleLangs  = "tests/resources/lang/multi_langs/";
 
-    public function test_it_returns_errors_if_one_key_is_missing()
+    /**
+     * @dataProvider one_missing_key_provider
+     *
+     * @return void
+     */
+    public function test_it_returns_errors_if_one_key_is_missing($directory)
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->basicDir . 'one_missing_key'
+            '--directory' => $directory,
         ]);
         $command->expectsOutput('Missing the translation with key: nl.test.test_key');
     }
 
-    public function test_it_returns_errors_if_multiple_keys_are_missing()
+    /**
+     * @dataProvider zero_missing_key_provider
+     *
+     * @return void
+     */
+    public function test_it_returns_errors_if_multiple_keys_are_missing($directory)
     {
         $command = $this->artisan('translations:check', [
-            '--directory' =>  $this->basicDir . 'two_missing_keys'
+            '--directory' =>  $directory
         ]);
         
         $command->expectsOutput('Missing the translation with key: nl.test.test_key');
         $command->expectsOutput('Missing the translation with key: nl.test.test_key2');
     }
 
-    public function test_it_fails_if_key_is_missing()
+    /**
+     * @dataProvider one_missing_key_provider
+     *
+     * @return void
+     */
+    public function test_it_fails_if_key_is_missing($directory)
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->basicDir . 'one_missing_key'
+            '--directory' => $directory
         ]);
         $command->assertExitCode(1);
     }
 
-    public function test_it_is_successful_if_none_keys_are_missing()
+    /**
+     * @dataProvider zero_missing_key_provider
+     *
+     * @return void
+     */
+    public function test_it_is_successful_if_none_keys_are_missing($directory)
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->basicDir . 'zero_missing_keys'
+            '--directory' => $directory
         ]);
 
         $command->assertExitCode(0);
@@ -73,11 +94,15 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
 
         $command->assertExitCode(0);
     }
-
-    public function test_it_returns_an_all_good_message_if_everything_is_good()
+    /**
+     * @dataProvider zero_missing_key_provider
+     *
+     * @return void
+     */
+    public function test_it_returns_an_all_good_message_if_everything_is_good($directory)
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->basicDir . 'zero_missing_keys'
+            '--directory' => $directory
         ]);
 
         $command->expectsOutput('✔ All translations are okay!');
@@ -85,10 +110,15 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         $command->assertExitCode(0);
     }
 
-    public function test_we_can_exclude_an_directory()
+    /**
+     * @dataProvider zero_missing_key_provider
+     *
+     * @return void
+     */
+    public function test_we_can_exclude_an_directory($directory)
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->basicDir . 'zero_missing_keys',
+            '--directory' => $directory,
             '--excludedDirectories' => 'nl'
         ]);
 
@@ -97,15 +127,53 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         $command->assertExitCode(0);
     }
 
-    public function test_we_can_exclude_two_directories()
+    /**
+     * @dataProvider zero_missing_key_provider
+     *
+     * @return void
+     */
+    public function test_we_can_exclude_two_directories($directory)
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->basicDir . 'zero_missing_keys',
+            '--directory' => $directory,
             '--excludedDirectories' => 'nl,en'
         ]);
 
         $command->expectsOutput('✔ All translations are okay!');
 
         $command->assertExitCode(0);
+    }
+
+
+    public function one_missing_file_provider(): array
+    {
+        return [
+            [$this->basicDir . 'one_missing_file'],
+            [$this->jsonDir . 'one_missing_file'],
+        ];
+    }
+
+    public function one_missing_key_provider(): array
+    {
+        return [
+            [$this->basicDir . 'one_missing_key'],
+            [$this->jsonDir . 'one_missing_key'],
+        ];
+    }
+
+    public function two_missing_key_provider(): array
+    {
+        return [
+            [$this->basicDir . 'two_missing_keys'],
+            [$this->jsonDir . 'two_missing_keys'],
+        ];
+    }
+
+    public function zero_missing_key_provider(): array
+    {
+        return [
+            [$this->basicDir . 'zero_missing_keys'],
+            [$this->jsonDir . 'zero_missing_keys'],
+        ];
     }
 }
