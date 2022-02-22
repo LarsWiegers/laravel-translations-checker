@@ -102,8 +102,8 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             foreach ($languages as $language) {
 	
 				$fileKey = basename($key);
-	
-				$exists = array_key_exists($directory . '/' .  $language . '/' . $fileKey, $this->realLines);
+
+				$exists = array_key_exists($directory . DIRECTORY_SEPARATOR .  $language . DIRECTORY_SEPARATOR . $fileKey, $this->realLines);
 
                 if ($this->isDirInExcludedDirectories($language)) {
                     continue;
