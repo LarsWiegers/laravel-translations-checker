@@ -57,7 +57,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             $directory = app()->langPath();
         }
 
-        if ($this->option('excludedDirectories') == 'none') {
+        if ($this->option('excludedDirectories') === 'none') {
             $this->excludedDirectories = [];
         } elseif ($this->option('excludedDirectories')) {
             $this->excludedDirectories = explode(',', $this->option('excludedDirectories'));
@@ -123,7 +123,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             $this->error('Missing the translation with key: ' . $missingTranslation);
         }
 
-        if (count($missingFiles) == 0 && count($missing) == 0) {
+        if (count($missingFiles) === 0 && count($missing) === 0) {
             $this->info('✔ All translations are okay!');
         }
 
@@ -166,7 +166,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
         if ($handle = opendir($directory)) {
             while (false !== ($languageDir = readdir($handle))) {
-                if ($languageDir != "." && $languageDir != "..") {
+                if ($languageDir !== "." && $languageDir !== "..") {
                     $languages[] = $languageDir;
                 }
             }
@@ -199,7 +199,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     private function isDirInExcludedDirectories($directoryToCheck): bool
     {
         foreach ($this->excludedDirectories as $excludedDirectory) {
-            if ($directoryToCheck == $excludedDirectory) {
+            if ($directoryToCheck === $excludedDirectory) {
                 return true;
             }
         }
