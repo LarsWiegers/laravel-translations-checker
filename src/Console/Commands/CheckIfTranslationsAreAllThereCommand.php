@@ -51,11 +51,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      */
     public function handle()
     {
-        if ($this->option('directory')) {
-            $directory = $this->option('directory');
-        } else {
-            $directory = app()->langPath();
-        }
+        $directory = $this->option('directory') ?: app()->langPath();
 
         if ($this->option('excludedDirectories') === 'none') {
             $this->excludedDirectories = [];
