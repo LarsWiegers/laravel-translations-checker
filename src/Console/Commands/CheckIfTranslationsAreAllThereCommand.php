@@ -51,11 +51,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      */
     public function handle()
     {
-        if ($this->option('directory')) {
-            $directory = $this->option('directory');
-        } else {
-            $directory = app()->langPath();
-        }
+        $directory = $this->option('directory') ?: app()->langPath();
 
         if ($this->option('excludedDirectories') === 'none') {
             $this->excludedDirectories = [];
@@ -72,7 +68,6 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
         $languages = $this->getLanguages($directory);
         $missingFiles = [];
-        $this->realLines = [];
 
         $path = $directory;
         $rdi = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME);
@@ -80,7 +75,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
             if (!File::isDirectory($langFile) && !Str::endsWith($langFile, '.txt')) {
                 $fileName = basename($langFile);
-                $languageDir = Str::replace($fileName, "", $langFile);
+                $languageDir = Str::replace($fileName, '', $langFile);
 
                 $languagesWithMissingFile = $this->checkIfFileExistsForOtherLanguages($languages, $fileName, $directory);
 
@@ -172,7 +167,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
         if ($handle = opendir($directory)) {
             while (false !== ($languageDir = readdir($handle))) {
-                if ($languageDir !== "." && $languageDir !== "..") {
+                if ($languageDir !== '.' && $languageDir !== '..') {
                     $languages[] = $languageDir;
                 }
             }
@@ -204,12 +199,6 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
     private function isDirInExcludedDirectories($directoryToCheck): bool
     {
-        foreach ($this->excludedDirectories as $excludedDirectory) {
-            if ($directoryToCheck === $excludedDirectory) {
-                return true;
-            }
-        }
-
-        return false;
+        return in_array($directoryToCheck, $this->excludedDirectories, true);
     }
 }
