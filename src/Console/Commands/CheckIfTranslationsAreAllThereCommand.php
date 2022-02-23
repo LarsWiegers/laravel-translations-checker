@@ -68,7 +68,6 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
         $languages = $this->getLanguages($directory);
         $missingFiles = [];
-        $this->realLines = [];
 
         $path = $directory;
         $rdi = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME);
