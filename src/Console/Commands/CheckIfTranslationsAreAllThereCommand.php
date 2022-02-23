@@ -75,7 +75,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
             if (!File::isDirectory($langFile) && !Str::endsWith($langFile, '.txt')) {
                 $fileName = basename($langFile);
-                $languageDir = Str::replace($fileName, "", $langFile);
+                $languageDir = Str::replace($fileName, '', $langFile);
 
                 $languagesWithMissingFile = $this->checkIfFileExistsForOtherLanguages($languages, $fileName, $directory);
 
@@ -167,7 +167,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
         if ($handle = opendir($directory)) {
             while (false !== ($languageDir = readdir($handle))) {
-                if ($languageDir !== "." && $languageDir !== "..") {
+                if ($languageDir !== '.' && $languageDir !== '..') {
                     $languages[] = $languageDir;
                 }
             }
