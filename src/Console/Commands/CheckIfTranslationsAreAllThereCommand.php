@@ -199,12 +199,6 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
     private function isDirInExcludedDirectories($directoryToCheck): bool
     {
-        foreach ($this->excludedDirectories as $excludedDirectory) {
-            if ($directoryToCheck === $excludedDirectory) {
-                return true;
-            }
-        }
-
-        return false;
+        return in_array($directoryToCheck, $this->excludedDirectories, true);
     }
 }
