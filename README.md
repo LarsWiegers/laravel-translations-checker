@@ -20,11 +20,35 @@ composer require larswiegers/laravel-translations-checker
 ```php
 php artisan translations:check
 ```
-
+### Different directory
 Are your translations in a weird directory? use the --directory option like this:
-
 ```php
 php artisan translations:check --directory=resources/lang
+```
+### Exclude directories
+Some packages have their own language files, it is probably smart to exclude them. 
+```php
+php artisan translations:check --excludedDirectories=lang/vendor
+```
+
+### Running in github actions?
+```
+  translations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          extensions: mbstring, intl
+          ini-values: post_max_size=256M, max_execution_time=180
+          coverage: xdebug
+          tools: php-cs-fixer, phpunit
+      - name: Install Dependencies
+        run: composer install -q --no-interaction --no-scripts
+      - name: Run translations check
+        run: php artisan translations:check --excludedDirectories=vendor
 ```
 
 ### What does the output look like?
