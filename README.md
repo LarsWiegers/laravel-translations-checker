@@ -16,7 +16,7 @@ composer require larswiegers/laravel-translations-checker
 ```
 
 ## Usage
-
+Use the command below, it is that easy!
 ```php
 php artisan translations:check
 ```
@@ -30,6 +30,8 @@ Some packages have their own language files, it is probably smart to exclude the
 ```php
 php artisan translations:check --excludedDirectories=lang/vendor
 ```
+### JSON support
+The package supports both .php files and .json files for the translations.
 
 ### Running in github actions?
 ```
