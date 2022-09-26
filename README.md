@@ -4,6 +4,8 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/larswiegers/laravel-translations-checker.svg?style=flat-square)](https://packagist.org/packages/larswiegers/laravel-translations-checker)
 ![GitHub Actions](https://github.com/larswiegers/laravel-translations-checker/actions/workflows/main.yml/badge.svg)
 
+![Laravel translation checker](https://banners.beyondco.de/Laravel%20translation%20checker.png?theme=light&packageManager=composer+require&packageName=larswiegers%2Flaravel-translations-checker&pattern=architect&style=style_1&description=Use+the+laravel+translation+checker+and+get+direct+feedback+where+and+what+translations+you+are+missing%21&md=1&showWatermark=0&fontSize=100px&images=globe)
+
 Ever feel that you are missing translations in some languages you support? Get users emailing you about weird strings on their screen?
 
 Use the laravel translation checker and get direct feedback where and what translations you are missing!
