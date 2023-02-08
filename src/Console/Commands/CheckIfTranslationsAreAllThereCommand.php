@@ -73,7 +73,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         $rdi = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME);
         foreach (new RecursiveIteratorIterator($rdi, RecursiveIteratorIterator::SELF_FIRST) as $langFile => $info) {
 
-            if (!File::isDirectory($langFile) && !Str::endsWith($langFile, '.txt')) {
+            if (!File::isDirectory($langFile) && Str::endsWith($langFile, ['.json', '.php'])) {
                 $fileName = basename($langFile);
                 $languageDir = Str::replace($fileName, '', $langFile);
 
@@ -87,7 +87,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                     if ($this->isDirInExcludedDirectories($languageWithMissingFile)) {
                         continue;
                     }
-				
+
                     $missingFiles[] = 'The language ' . $languageWithMissingFile . ' (' . $directory . '/' . $languageWithMissingFile . ') is missing the file ( ' . $fileName . ' )';
 				}
                 $this->handleFile($languageDir, $langFile);
@@ -99,7 +99,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         foreach ($this->realLines as $key => $line) {
 
             foreach ($languages as $language) {
-	
+
 				$fileKey = basename($key);
 
 				$exists = array_key_exists($directory . DIRECTORY_SEPARATOR .  $language . DIRECTORY_SEPARATOR . $fileKey, $this->realLines);
