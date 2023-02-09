@@ -141,6 +141,11 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             $lines = include($langFile);
         }
 
+        if (!is_array($lines)) {
+            $this->warn("Skipping file (" . $langFile . ") because it is empty.");
+            return;
+        }
+
         foreach ($lines as $index => $line) {
             if (is_array($line)) {
                 foreach ($line as $index2 => $line2) {
