@@ -142,7 +142,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         }
 
         if (!is_array($lines)) {
-            $this->warn("Failed to resolve file: " . $langFile);
+            $this->warn("Skipping file (" . $langFile . ") because it is empty.");
             return;
         }
 
