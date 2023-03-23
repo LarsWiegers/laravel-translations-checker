@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Console\Commands;
 
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
@@ -23,6 +24,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         $command = $this->artisan('translations:check', [
             '--directory' => $directory,
         ]);
+
         $command->expectsOutput('Missing the translation with key: nl.test.test_key');
     }
 
@@ -142,6 +144,36 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         $command->expectsOutput('✔ All translations are okay!');
 
         $command->assertExitCode(0);
+    }
+
+    public function test_it_handles_one_toplevel_language_file() {
+        $command = $this->artisan('translations:check', [
+            '--directory' => $this->jsonDir . 'toplevel_json_files/one',
+        ]);
+
+        $command->expectsOutput('✔ All translations are okay!');
+
+        $command->assertExitCode(0);
+    }
+
+    public function test_it_handles_two_toplevel_language_file() {
+        $command = $this->artisan('translations:check', [
+            '--directory' => $this->jsonDir . 'toplevel_json_files/two',
+        ]);
+
+        $command->expectsOutput('✔ All translations are okay!');
+
+        $command->assertExitCode(0);
+    }
+
+    public function test_it_handles_missing_key_in_toplevel_language_file() {
+        $command = $this->artisan('translations:check', [
+            '--directory' => $this->jsonDir . 'toplevel_json_files/missing_key_in_one_lang',
+        ]);
+
+        $command->expectsOutput('Missing the translation with key: nl.test_key');
+
+        $command->assertExitCode(1);
     }
 
 
