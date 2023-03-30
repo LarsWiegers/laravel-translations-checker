@@ -100,10 +100,12 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
             foreach ($languages as $language) {
 
-				$fileKey = basename($key);
+                $fileNameWithoutKey = substr($key, 0, strpos($key, "**"));
+				$fileKey = basename($fileNameWithoutKey);
+                $keyWithoutFile = substr($key, strpos($key, "**") + 2, strlen($key));
 
-				$exists = $this->translationExistsAsJsonOrAsSubDir($directory, $language, $fileKey);
-//                dump($language, $key, $exists, $this->realLines);
+				$exists = $this->translationExistsAsJsonOrAsSubDir($directory, $language, $fileKey, $keyWithoutFile);
+
                 if ($this->isDirInExcludedDirectories($language)) {
                     continue;
                 }
@@ -116,7 +118,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                         }
                     }
 
-                    $missing[] = $language . '.' . $fileName;
+                    $missing[] = $language . '.' . $fileName . '.' . $keyWithoutFile;
                 }
             }
         }
@@ -155,10 +157,10 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         foreach ($lines as $index => $line) {
             if (is_array($line)) {
                 foreach ($line as $index2 => $line2) {
-                    $this->realLines[$languageDir . $fileName . '.' . $index . '.' . $index2] = $line2;
+                    $this->realLines[$languageDir . $fileName . '.' . $index . '**' . $index2] = $line2;
                 }
             } else {
-                $this->realLines[$languageDir  . $fileName . '.' . $index] = $line;
+                $this->realLines[$languageDir  . $fileName . '**' . $index] = $line;
             }
         }
     }
@@ -231,12 +233,12 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      * @param string $fileKey
      * @return bool
      */
-    public function translationExistsAsJsonOrAsSubDir($directory, $language, string $fileKey): bool
+    public function translationExistsAsJsonOrAsSubDir($directory, $language, string $fileKey, string $keyWithoutFile): bool
     {
         $existsAsSubDirValue = array_key_exists($directory . DIRECTORY_SEPARATOR . $language . DIRECTORY_SEPARATOR . $fileKey, $this->realLines);
 
         $fileKeyWithoutLangComponent = explode('.', $fileKey, 2)[1];
-        $existsAsJSONValue = array_key_exists($directory . DIRECTORY_SEPARATOR . $language . '.' . $fileKeyWithoutLangComponent, $this->realLines);
+        $existsAsJSONValue = array_key_exists($directory . DIRECTORY_SEPARATOR . $language . '.' . $fileKeyWithoutLangComponent . '**' . $keyWithoutFile, $this->realLines);
         return $existsAsSubDirValue || $existsAsJSONValue;
     }
 }

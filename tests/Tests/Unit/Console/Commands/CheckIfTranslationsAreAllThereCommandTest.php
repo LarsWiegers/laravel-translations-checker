@@ -176,6 +176,13 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         $command->assertExitCode(1);
     }
 
+    public function test_it_handles_slashes_in_json_keys() {
+        $command = $this->artisan('translations:check', [
+            '--directory' => $this->jsonDir . 'toplevel_json_files/slashes_in_title',
+        ]);
+
+        $command->assertExitCode(0);
+    }
 
     public function one_missing_file_provider(): array
     {
