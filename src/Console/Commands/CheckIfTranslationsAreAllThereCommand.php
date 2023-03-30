@@ -113,12 +113,17 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                     $fileName = Str::replace(['.php', '.json'], '', $fileKey);
 
                     foreach($languages as $checkingLanguage) {
-                        if(Str::contains($fileName, $checkingLanguage . '.')) {
-                            $fileName = str_replace($checkingLanguage. '.', '', $fileName);
+                        if(Str::contains($fileName, $checkingLanguage)) {
+                            $fileName = str_replace($checkingLanguage, '', $fileName);
                         }
                     }
 
-                    $missing[] = $language . '.' . $fileName . '.' . $keyWithoutFile;
+                    if(Str::contains($fileKey, $languages)) {
+                        $missing[] = $language . '.' . $keyWithoutFile;
+                    }else {
+                        $missing[] = $language . '.' . $fileName . '.' . $keyWithoutFile;
+                    }
+
                 }
             }
         }
@@ -235,7 +240,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      */
     public function translationExistsAsJsonOrAsSubDir($directory, $language, string $fileKey, string $keyWithoutFile): bool
     {
-        $existsAsSubDirValue = array_key_exists($directory . DIRECTORY_SEPARATOR . $language . DIRECTORY_SEPARATOR . $fileKey, $this->realLines);
+        $existsAsSubDirValue = array_key_exists($directory . DIRECTORY_SEPARATOR . $language . DIRECTORY_SEPARATOR . $fileKey . '**' . $keyWithoutFile, $this->realLines);
 
         $fileKeyWithoutLangComponent = explode('.', $fileKey, 2)[1];
         $existsAsJSONValue = array_key_exists($directory . DIRECTORY_SEPARATOR . $language . '.' . $fileKeyWithoutLangComponent . '**' . $keyWithoutFile, $this->realLines);
