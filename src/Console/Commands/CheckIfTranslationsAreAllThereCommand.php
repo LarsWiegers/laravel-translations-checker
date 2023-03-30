@@ -100,9 +100,11 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
             foreach ($languages as $language) {
 
-				$fileKey = basename($key);
+                $fileNameWithoutKey = substr($key, 0, strpos($key, "**"));
+				$fileKey = basename($fileNameWithoutKey);
+                $keyWithoutFile = substr($key, strpos($key, "**") + 2, strlen($key));
 
-				$exists = array_key_exists($directory . DIRECTORY_SEPARATOR .  $language . DIRECTORY_SEPARATOR . $fileKey, $this->realLines);
+				$exists = $this->translationExistsAsJsonOrAsSubDir($directory, $language, $fileKey, $keyWithoutFile);
 
                 if ($this->isDirInExcludedDirectories($language)) {
                     continue;
@@ -110,7 +112,18 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                 if (!$exists) {
                     $fileName = Str::replace(['.php', '.json'], '', $fileKey);
 
-                    $missing[] = $language . '.' . $fileName;
+                    foreach($languages as $checkingLanguage) {
+                        if(Str::contains($fileName, $checkingLanguage)) {
+                            $fileName = str_replace($checkingLanguage, '', $fileName);
+                        }
+                    }
+
+                    if(Str::contains($fileKey, $languages)) {
+                        $missing[] = $language . '.' . $keyWithoutFile;
+                    }else {
+                        $missing[] = $language . '.' . $fileName . '.' . $keyWithoutFile;
+                    }
+
                 }
             }
         }
@@ -149,10 +162,10 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         foreach ($lines as $index => $line) {
             if (is_array($line)) {
                 foreach ($line as $index2 => $line2) {
-                    $this->realLines[$languageDir . $fileName . '.' . $index . '.' . $index2] = $line2;
+                    $this->realLines[$languageDir . $fileName . '.' . $index . '**' . $index2] = $line2;
                 }
             } else {
-                $this->realLines[$languageDir  . $fileName . '.' . $index] = $line;
+                $this->realLines[$languageDir  . $fileName . '**' . $index] = $line;
             }
         }
     }
@@ -177,7 +190,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         if ($handle = opendir($directory)) {
             while (false !== ($languageDir = readdir($handle))) {
                 if ($languageDir !== '.' && $languageDir !== '..') {
-                    $languages[] = $languageDir;
+                    $languages[] = str_replace('.json', '', $languageDir);
                 }
             }
         }
@@ -196,9 +209,11 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     private function checkIfFileExistsForOtherLanguages($languages, $fileName, $baseDirectory): array
     {
         $languagesWhereFileIsMissing = [];
-
         foreach ($languages as $language) {
-            if (!File::exists($baseDirectory . '/' . $language .  '/' . $fileName)) {
+            if (
+                !File::exists($baseDirectory . '/' . $language .  '/' . $fileName)
+                && !File::exists($baseDirectory . '/' . $fileName)
+            ) {
                 $languagesWhereFileIsMissing[] = $language;
             }
         }
@@ -215,5 +230,20 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         }
 
         return false;
+    }
+
+    /**
+     * @param $directory
+     * @param $language
+     * @param string $fileKey
+     * @return bool
+     */
+    public function translationExistsAsJsonOrAsSubDir($directory, $language, string $fileKey, string $keyWithoutFile): bool
+    {
+        $existsAsSubDirValue = array_key_exists($directory . DIRECTORY_SEPARATOR . $language . DIRECTORY_SEPARATOR . $fileKey . '**' . $keyWithoutFile, $this->realLines);
+
+        $fileKeyWithoutLangComponent = explode('.', $fileKey, 2)[1];
+        $existsAsJSONValue = array_key_exists($directory . DIRECTORY_SEPARATOR . $language . '.' . $fileKeyWithoutLangComponent . '**' . $keyWithoutFile, $this->realLines);
+        return $existsAsSubDirValue || $existsAsJSONValue;
     }
 }

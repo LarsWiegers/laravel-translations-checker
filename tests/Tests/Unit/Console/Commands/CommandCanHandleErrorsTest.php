@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Console\Commands;
 
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 final class CommandCanHandleErrorsTest extends TestCase
