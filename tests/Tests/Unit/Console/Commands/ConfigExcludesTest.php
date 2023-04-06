@@ -20,7 +20,7 @@ final class ConfigExcludesTest extends TestCase
             '--excludedKeys' => []
         ]);
 
-        $command->assertOk();
+        $command->assertExitCode(0);
     }
 
     public function test_it_excludes_a_key_if_it_is_passed_in()
@@ -33,6 +33,6 @@ final class ConfigExcludesTest extends TestCase
             ])
         ]);
 
-        $command->assertOk();
+        $command->assertExitCode(0);
     }
 }
