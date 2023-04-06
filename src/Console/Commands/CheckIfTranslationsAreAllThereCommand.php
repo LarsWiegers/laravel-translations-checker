@@ -3,6 +3,7 @@
 namespace Larswiegers\LaravelTranslationsChecker\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use RecursiveDirectoryIterator;
@@ -33,6 +34,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      * @var array
      */
     public array $realLines = [];
+    private Collection $excludedKeys;
 
     /**
      * Create a new command instance.
@@ -52,15 +54,15 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     public function handle()
     {
         $directory = $this->option('directory') ?: app()->langPath();
+        if (!$this->checkIfDirectoryExists($directory)) {
+            $this->error('The passed directory (' . $directory . ') does not exist.');
+            return $this::FAILURE;
+        }
 
         $this->excludedDirectories = $this->getExcludedDirectories();
 
         $this->excludedKeys = $this->getExcludedKeys();
 
-        if (!$this->checkIfDirectoryExists($directory)) {
-            $this->error('The passed directory (' . $directory . ') does not exist.');
-            return $this::FAILURE;
-        }
 
         $languages = $this->getLanguages($directory);
         $missingFiles = [];
@@ -258,14 +260,14 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         }
     }
 
-    private function getExcludedKeys()
+    private function getExcludedKeys(): Collection
     {
         if ($this->option('excludedKeys') === 'none') {
-            return collect([]);
+            return collect(config('translation-checker.excluded_keys'));
         } elseif ($this->option('excludedKeys')) {
             return collect(explode(',', $this->option('excludedKeys')));
         } else {
-            return collect([]);
+            return collect();
         }
     }
 }

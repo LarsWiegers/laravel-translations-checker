@@ -6,6 +6,7 @@ namespace Console\Commands;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
 
 final class ConfigExcludesTest extends TestCase
@@ -31,6 +32,19 @@ final class ConfigExcludesTest extends TestCase
             '--excludedKeys' => implode(',', [
                 'test_key'
             ])
+        ]);
+
+        $command->assertExitCode(0);
+    }
+
+    public function test_it_can_get_them_from_config()
+    {
+        $dir = $this->excludesDir . 'exclude_one_missing_key';
+
+        Config::set('translation-checker.excluded_keys', ['test_key']);
+
+        $command = $this->artisan('translations:check', [
+            '--directory' => $dir
         ]);
 
         $command->assertExitCode(0);

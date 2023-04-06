@@ -13,7 +13,7 @@ return [
     */
 
 
-    'ignore' => [
+    'excluded_keys' => [
         //
     ],
 
