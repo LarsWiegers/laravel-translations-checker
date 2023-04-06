@@ -15,7 +15,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'translations:check {--directory=} {--excludedDirectories=none}';
+    protected $signature = 'translations:check {--directory=} {--excludedDirectories=none} {--excludedKeys=none}';
 
     /**
      * The console command description.
@@ -53,13 +53,9 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     {
         $directory = $this->option('directory') ?: app()->langPath();
 
-        if ($this->option('excludedDirectories') === 'none') {
-            $this->excludedDirectories = [];
-        } elseif ($this->option('excludedDirectories')) {
-            $this->excludedDirectories = explode(',', $this->option('excludedDirectories'));
-        } else {
-            $this->excludedDirectories = [];
-        }
+        $this->excludedDirectories = $this->getExcludedDirectories();
+
+        $this->excludedKeys = $this->getExcludedKeys();
 
         if (!$this->checkIfDirectoryExists($directory)) {
             $this->error('The passed directory (' . $directory . ') does not exist.');
@@ -106,24 +102,25 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
 				$exists = $this->translationExistsAsJsonOrAsSubDir($directory, $language, $fileKey, $keyWithoutFile);
 
-                if ($this->isDirInExcludedDirectories($language)) {
+                if ($this->isDirInExcludedDirectories($language) ||
+                    $exists ||
+                    $this->excludedKeys->contains($keyWithoutFile)
+                ) {
                     continue;
                 }
-                if (!$exists) {
-                    $fileName = Str::replace(['.php', '.json'], '', $fileKey);
 
-                    foreach($languages as $checkingLanguage) {
-                        if(Str::contains($fileName, $checkingLanguage)) {
-                            $fileName = str_replace($checkingLanguage, '', $fileName);
-                        }
+                $fileName = Str::replace(['.php', '.json'], '', $fileKey);
+
+                foreach($languages as $checkingLanguage) {
+                    if(Str::contains($fileName, $checkingLanguage)) {
+                        $fileName = str_replace($checkingLanguage, '', $fileName);
                     }
+                }
 
-                    if(Str::contains($fileKey, $languages)) {
-                        $missing[] = $language . '.' . $keyWithoutFile;
-                    }else {
-                        $missing[] = $language . '.' . $fileName . '.' . $keyWithoutFile;
-                    }
-
+                if(Str::contains($fileKey, $languages)) {
+                    $missing[] = $language . '.' . $keyWithoutFile;
+                }else {
+                    $missing[] = $language . '.' . $fileName . '.' . $keyWithoutFile;
                 }
             }
         }
@@ -245,5 +242,30 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         $fileKeyWithoutLangComponent = explode('.', $fileKey, 2)[1];
         $existsAsJSONValue = array_key_exists($directory . DIRECTORY_SEPARATOR . $language . '.' . $fileKeyWithoutLangComponent . '**' . $keyWithoutFile, $this->realLines);
         return $existsAsSubDirValue || $existsAsJSONValue;
+    }
+
+    /**
+     * @return array
+     */
+    public function getExcludedDirectories(): array
+    {
+        if ($this->option('excludedDirectories') === 'none') {
+            return [];
+        } elseif ($this->option('excludedDirectories')) {
+            return explode(',', $this->option('excludedDirectories'));
+        } else {
+            return [];
+        }
+    }
+
+    private function getExcludedKeys()
+    {
+        if ($this->option('excludedKeys') === 'none') {
+            return collect([]);
+        } elseif ($this->option('excludedKeys')) {
+            return collect(explode(',', $this->option('excludedKeys')));
+        } else {
+            return collect([]);
+        }
     }
 }
