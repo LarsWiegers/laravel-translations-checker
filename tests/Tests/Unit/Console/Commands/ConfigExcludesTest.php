@@ -37,6 +37,21 @@ final class ConfigExcludesTest extends TestCase
         $command->assertExitCode(0);
     }
 
+    public function test_it_can_exclude_an_nested_key()
+    {
+        $dir = $this->excludesDir . 'exclude_nested_key';
+
+        Config::set('translation-checker.excluded_keys', [
+            'nested.test_key'
+        ]);
+
+        $command = $this->artisan('translations:check', [
+            '--directory' => $dir,
+        ]);
+
+        $command->assertExitCode(0);
+    }
+
     public function test_it_can_get_them_from_config()
     {
         $dir = $this->excludesDir . 'exclude_one_missing_key';

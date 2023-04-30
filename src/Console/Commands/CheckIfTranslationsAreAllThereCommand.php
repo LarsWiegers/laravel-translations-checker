@@ -70,26 +70,26 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         $path = $directory;
         $rdi = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME);
         foreach (new RecursiveIteratorIterator($rdi, RecursiveIteratorIterator::SELF_FIRST) as $langFile => $info) {
+            if (File::isDirectory($langFile) || !Str::endsWith($langFile, ['.json', '.php'])) {
+                continue;
+            }
 
-            if (!File::isDirectory($langFile) && Str::endsWith($langFile, ['.json', '.php'])) {
-                $fileName = basename($langFile);
-                $languageDir = Str::replace($fileName, '', $langFile);
+            $fileName = basename($langFile);
+            $languageDir = Str::replace($fileName, '', $langFile);
+            if ($this->isDirInExcludedDirectories($languageDir)) {
+                continue;
+            }
 
-                $languagesWithMissingFile = $this->checkIfFileExistsForOtherLanguages($languages, $fileName, $directory);
+            $languagesWithMissingFile = $this->checkIfFileExistsForOtherLanguages($languages, $fileName, $directory);
 
-                if ($this->isDirInExcludedDirectories($languageDir)) {
+            foreach ($languagesWithMissingFile as $languageWithMissingFile) {
+                if ($this->isDirInExcludedDirectories($languageWithMissingFile)) {
                     continue;
                 }
 
-                foreach ($languagesWithMissingFile as $languageWithMissingFile) {
-                    if ($this->isDirInExcludedDirectories($languageWithMissingFile)) {
-                        continue;
-                    }
-
-                    $missingFiles[] = 'The language ' . $languageWithMissingFile . ' (' . $directory . '/' . $languageWithMissingFile . ') is missing the file ( ' . $fileName . ' )';
-				}
-                $this->handleFile($languageDir, $langFile);
+                $missingFiles[] = 'The language ' . $languageWithMissingFile . ' (' . $directory . '/' . $languageWithMissingFile . ') is missing the file ( ' . $fileName . ' )';
             }
+            $this->handleFile($languageDir, $langFile);
         }
 
 
@@ -104,9 +104,21 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
 				$exists = $this->translationExistsAsJsonOrAsSubDir($directory, $language, $fileKey, $keyWithoutFile);
 
+                $keyToCheck = str_replace('**', '.',
+                    substr(
+                        $key, strpos($key, "$$") + 2, strlen($key)
+                    )
+                );
+
+                if(str_starts_with($keyToCheck, '.')) {
+                    $keyToCheck = str_replace('.', '', $keyToCheck);
+                }
+
                 if ($this->isDirInExcludedDirectories($language) ||
                     $exists ||
-                    $this->excludedKeys->contains($keyWithoutFile)
+                    $this->excludedKeys->contains(
+                        $keyToCheck
+                    )
                 ) {
                     continue;
                 }
@@ -122,7 +134,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                 if(Str::contains($fileKey, $languages)) {
                     $missing[] = $language . '.' . $keyWithoutFile;
                 }else {
-                    $missing[] = $language . '.' . $fileName . '.' . $keyWithoutFile;
+                    $missing[] = $language . '.' . str_replace('$$', '', $fileName) . '.' . $keyWithoutFile;
                 }
             }
         }
@@ -161,10 +173,10 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         foreach ($lines as $index => $line) {
             if (is_array($line)) {
                 foreach ($line as $index2 => $line2) {
-                    $this->realLines[$languageDir . $fileName . '.' . $index . '**' . $index2] = $line2;
+                    $this->realLines[$languageDir . $fileName . '$$' . $index . '**' . $index2] = $line2;
                 }
             } else {
-                $this->realLines[$languageDir  . $fileName . '**' . $index] = $line;
+                $this->realLines[$languageDir  . $fileName . '$$**' . $index] = $line;
             }
         }
     }
