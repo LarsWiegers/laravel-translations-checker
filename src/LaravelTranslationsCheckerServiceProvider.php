@@ -22,7 +22,7 @@ class LaravelTranslationsCheckerServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('laravel-translations-checker.php'),
+                __DIR__.'/../config/laravel-translations-checker.php' => config_path('laravel-translations-checker.php'),
             ], 'config');
 
             // Publishing the views.
@@ -53,7 +53,7 @@ class LaravelTranslationsCheckerServiceProvider extends ServiceProvider
     public function register()
     {
         // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'laravel-translations-checker');
+        $this->mergeConfigFrom(__DIR__.'/../config/laravel-translations-checker.php', 'laravel-translations-checker');
 
         // Register the main class to use with the facade
         $this->app->singleton('laravel-translations-checker', function () {

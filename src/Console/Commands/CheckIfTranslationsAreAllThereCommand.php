@@ -197,7 +197,9 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
         closedir($handle);
 
-        return $languages;
+        return array_filter($languages, static function ($element) {
+            return in_array($element, config('laravel-translations-checker.exclude_languages'));
+        });
     }
 
     /**
