@@ -166,15 +166,6 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     }
 
     /**
-     * @param string $directory
-     * @return bool
-     */
-    private function checkIfDirectoryExists(string $directory): bool
-    {
-        return File::exists($directory);
-    }
-
-    /**
      * @param $languages
      * @param $fileName
      * @param $baseDirectory
@@ -236,7 +227,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             $this->excludedDirectories = [];
         }
 
-        if (!$this->checkIfDirectoryExists($directory)) {
+        if (!File::exists($directory)) {
             $this->error('The passed directory (' . $directory . ') does not exist.');
             throw new DirectoryNotFoundException($directory);
         }
