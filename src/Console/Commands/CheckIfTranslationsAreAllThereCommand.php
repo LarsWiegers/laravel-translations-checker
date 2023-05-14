@@ -3,8 +3,13 @@
 namespace Larswiegers\LaravelTranslationsChecker\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Larswiegers\LaravelTranslationsChecker\Console\Domain\DirectoryNotFoundException;
+use Larswiegers\LaravelTranslationsChecker\Console\Domain\LanguageFinder;
+use Larswiegers\LaravelTranslationsChecker\Console\Domain\MissingTranslationOutputWriter;
+use Larswiegers\LaravelTranslationsChecker\Console\Domain\OptionsHandler;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -33,6 +38,8 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      * @var array
      */
     public array $realLines = [];
+    private LanguageFinder $languageFinder;
+    private FileHandler $fileHandler;
 
     /**
      * Create a new command instance.
@@ -42,6 +49,8 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     public function __construct()
     {
         parent::__construct();
+        $this->languageFinder = new LanguageFinder();
+        $this->fileHandler = new FileHandler($this);
     }
 
     /**
@@ -49,24 +58,15 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
-        $directory = $this->option('directory') ?: app()->langPath();
-
-        if ($this->option('excludedDirectories') === 'none') {
-            $this->excludedDirectories = [];
-        } elseif ($this->option('excludedDirectories')) {
-            $this->excludedDirectories = explode(',', $this->option('excludedDirectories'));
-        } else {
-            $this->excludedDirectories = [];
-        }
-
-        if (!$this->checkIfDirectoryExists($directory)) {
-            $this->error('The passed directory (' . $directory . ') does not exist.');
+        try {
+            ['directory' => $directory] = $this->handleOptions();
+        }catch(DirectoryNotFoundException $directoryNotFoundException) {
             return $this::FAILURE;
         }
 
-        $languages = $this->getLanguages($directory);
+        $languages = $this->languageFinder->getLanguages($directory);
         $missingFiles = [];
 
         $path = $directory;
@@ -88,7 +88,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                         continue;
                     }
 
-                    $missingFiles[] = 'The language ' . $languageWithMissingFile . ' (' . $directory . '/' . $languageWithMissingFile . ') is missing the file ( ' . $fileName . ' )';
+                    $missingFiles[] = MissingTranslationOutputWriter::writeMissingLanguageFile($languageWithMissingFile, $directory, $fileName);
 				}
                 $this->handleFile($languageDir, $langFile);
             }
@@ -119,9 +119,9 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                     }
 
                     if(Str::contains($fileKey, $languages)) {
-                        $missing[] = $language . '.' . $keyWithoutFile;
+                        $missing[] = MissingTranslationOutputWriter::writeWithLanguages($language, $keyWithoutFile);
                     }else {
-                        $missing[] = $language . '.' . $fileName . '.' . $keyWithoutFile;
+                        $missing[] = MissingTranslationOutputWriter::writeWithoutLanguages($language,$fileName,$keyWithoutFile);
                     }
 
                 }
@@ -148,9 +148,9 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     {
         $fileName = basename($langFile);
 
-        if(Str::endsWith($fileName, '.json')) {
+        if (Str::endsWith($fileName, '.json')) {
             $lines = json_decode(File::get($langFile), true);
-        }else {
+        } else {
             $lines = include($langFile);
         }
 
@@ -159,15 +159,10 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             return;
         }
 
-        foreach ($lines as $index => $line) {
-            if (is_array($line)) {
-                foreach ($line as $index2 => $line2) {
-                    $this->realLines[$languageDir . $fileName . '.' . $index . '**' . $index2] = $line2;
-                }
-            } else {
-                $this->realLines[$languageDir  . $fileName . '**' . $index] = $line;
-            }
-        }
+        $this->realLines = array_merge(
+            $this->realLines,
+            $this->fileHandler->handleFile($languageDir, $langFile)
+        );
     }
 
     /**
@@ -177,27 +172,6 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     private function checkIfDirectoryExists(string $directory): bool
     {
         return File::exists($directory);
-    }
-
-    /**
-     * @param string $directory
-     * @return array
-     */
-    private function getLanguages(string $directory): array
-    {
-        $languages = [];
-
-        if ($handle = opendir($directory)) {
-            while (false !== ($languageDir = readdir($handle))) {
-                if ($languageDir !== '.' && $languageDir !== '..') {
-                    $languages[] = str_replace('.json', '', $languageDir);
-                }
-            }
-        }
-
-        closedir($handle);
-
-        return $languages;
     }
 
     /**
@@ -245,5 +219,30 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         $fileKeyWithoutLangComponent = explode('.', $fileKey, 2)[1];
         $existsAsJSONValue = array_key_exists($directory . DIRECTORY_SEPARATOR . $language . '.' . $fileKeyWithoutLangComponent . '**' . $keyWithoutFile, $this->realLines);
         return $existsAsSubDirValue || $existsAsJSONValue;
+    }
+
+    /**
+     * @throws DirectoryNotFoundException
+     */
+    private function handleOptions(): array
+    {
+        $directory = $this->option('directory') ?: app()->langPath();
+
+        if ($this->option('excludedDirectories') === 'none') {
+            $this->excludedDirectories = [];
+        } elseif ($this->option('excludedDirectories')) {
+            $this->excludedDirectories = explode(',', $this->option('excludedDirectories'));
+        } else {
+            $this->excludedDirectories = [];
+        }
+
+        if (!$this->checkIfDirectoryExists($directory)) {
+            $this->error('The passed directory (' . $directory . ') does not exist.');
+            throw new DirectoryNotFoundException($directory);
+        }
+
+        return [
+            'directory' => $directory,
+        ];
     }
 }
