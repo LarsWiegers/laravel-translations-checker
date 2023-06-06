@@ -32,6 +32,22 @@ Some packages have their own language files, it is probably smart to exclude the
 ```php
 php artisan translations:check --excludedDirectories=lang/vendor
 ```
+### Exclude languages
+This section provides instructions on how to exclude specific languages from being checked.
+
+To exclude languages, follow these steps:
+
+1. Open the project's configuration file.
+
+2. Locate the `translation-checker` file.
+
+3. Add the language codes of the languages you want to exclude to the `exclude_languages` field.
+
+For example:
+```
+    exclude_languages = ["en", "fr", "es"]
+```
+
 ### JSON support
 The package supports both .php files and .json files for the translations.
 

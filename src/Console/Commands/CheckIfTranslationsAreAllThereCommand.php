@@ -146,6 +146,16 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
     public function handleFile($languageDir, $langFile): void
     {
+        $excludedLangs = config('translations-checker.exclude_languages');
+
+        if (
+            $excludedLangs &&
+            (in_array(Str::afterLast($languageDir, '/'), $excludedLangs) ||
+                in_array(Str::afterLast(basename($languageDir, '.json'), '/'), $excludedLangs))
+        ) {
+            return;
+        }
+
         $fileName = basename($langFile);
 
         if(Str::endsWith($fileName, '.json')) {
@@ -197,7 +207,9 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
         closedir($handle);
 
-        return $languages;
+        return array_filter($languages, static function ($element) {
+            return ! in_array($element, config('translations-checker.exclude_languages'));
+        });
     }
 
     /**
