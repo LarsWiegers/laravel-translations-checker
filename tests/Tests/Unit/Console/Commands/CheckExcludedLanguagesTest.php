@@ -24,7 +24,7 @@ class CheckExcludedLanguagesTest extends TestCase
             '--directory' => $this->languagesDir
         ]);
 
-        $command->assertOk();
+        $command->assertExitCode(0);
     }
 
     /**
@@ -37,6 +37,6 @@ class CheckExcludedLanguagesTest extends TestCase
             '--directory' => $this->languagesDir
         ]);
 
-        $command->assertFailed();
+        $command->assertExitCode(1);
     }
 }
