@@ -16,7 +16,6 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      * @var string
      */
     protected $signature = 'translations:check {--directory=} {--excludedDirectories=none}';
-
     /**
      * The console command description.
      *
@@ -33,6 +32,8 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      * @var array
      */
     public array $realLines = [];
+
+    const EXCLUDE_MAC_FILES = ['.DS_Store'];
 
     /**
      * Create a new command instance.
@@ -88,6 +89,10 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                         continue;
                     }
 
+                    if(in_array($languageWithMissingFile, self::EXCLUDE_MAC_FILES)) {
+                        continue;
+                    }
+
                     $missingFiles[] = 'The language ' . $languageWithMissingFile . ' (' . $directory . '/' . $languageWithMissingFile . ') is missing the file ( ' . $fileName . ' )';
 				}
                 $this->handleFile($languageDir, $langFile);
@@ -116,6 +121,10 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                         if(Str::contains($fileName, $checkingLanguage)) {
                             $fileName = str_replace($checkingLanguage, '', $fileName);
                         }
+                    }
+
+                    if(in_array($language, self::EXCLUDE_MAC_FILES)) {
+                        continue;
                     }
 
                     if(Str::contains($fileKey, $languages)) {
