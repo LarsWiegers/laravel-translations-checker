@@ -15,7 +15,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'translations:check {--directory=} {--excludedDirectories=none}';
+    protected $signature = 'translations:check {--directory=} {--excludedDirectories=config}';
     /**
      * The console command description.
      *
@@ -54,7 +54,9 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     {
         $directory = $this->option('directory') ?: app()->langPath();
 
-        if ($this->option('excludedDirectories') === 'none') {
+        if ($this->option('excludedDirectories') === 'config') {
+            $this->excludedDirectories = (array)config('translations-checker.excluded_directories', []);
+        } elseif ($this->option('excludedDirectories') === 'none') {
             $this->excludedDirectories = [];
         } elseif ($this->option('excludedDirectories')) {
             $this->excludedDirectories = explode(',', $this->option('excludedDirectories'));

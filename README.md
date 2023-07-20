@@ -32,6 +32,14 @@ Some packages have their own language files, it is probably smart to exclude the
 ```php
 php artisan translations:check --excludedDirectories=lang/vendor
 ```
+
+This option is also available as configuration option 'excluded_directories'.
+
+For example:
+```php
+    'excluded_directories' => ['lang/vendor'],
+```
+
 ### Exclude languages
 This section provides instructions on how to exclude specific languages from being checked.
 
