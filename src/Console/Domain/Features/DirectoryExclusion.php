@@ -6,9 +6,12 @@ use Illuminate\Support\Str;
 
 class DirectoryExclusion
 {
-    public static $excludedDirectories;
+    /**
+     * @var array<string>
+     */
+    public static array $excludedDirectories;
 
-    public static function shouldExcludeDirectory($directoryToCheck): bool
+    public static function shouldExcludeDirectory(string $directoryToCheck): bool
     {
         foreach (self::$excludedDirectories as $excludedDirectory) {
             if (Str::contains($directoryToCheck, $excludedDirectory)) {
@@ -19,7 +22,11 @@ class DirectoryExclusion
         return false;
     }
 
-    public static function getExcludedDirectories($options): void
+    /**
+     * @param array<string> $options
+     * @return void
+     */
+    public static function getExcludedDirectories(array $options): void
     {
         if ($options['excludedDirectories'] === 'config') {
             self::$excludedDirectories = (array) config('translations-checker.excluded_directories', []);

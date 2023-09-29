@@ -42,7 +42,7 @@
     "scripts": {
         "test": "vendor/bin/phpunit",
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
-        "analyse": "vendor/bin/phpstan analyse src tests",
+        "analyse": "vendor/bin/phpstan analyse src --level 6",
         "format": "./vendor/bin/pint"
     },
     "config": {

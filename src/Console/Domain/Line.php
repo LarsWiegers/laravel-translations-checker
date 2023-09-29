@@ -30,7 +30,7 @@ class Line
 
     }
 
-    public function getDirectory()
+    public function getDirectory(): string
     {
         return $this->directory;
     }
@@ -40,7 +40,7 @@ class Line
         return str_replace($this->key, '', $this->fileName);
     }
 
-    public function keyWithoutFile()
+    public function keyWithoutFile() : string
     {
         return str_replace($this->fileName, '', $this->key);
     }

@@ -9,6 +9,7 @@ use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\GetLanguages;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\LanguagesWithMissingFiles;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\LanguagesWithMissingKeys;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\File;
+use Larswiegers\LaravelTranslationsChecker\Console\Domain\Line;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -28,8 +29,9 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      */
     protected $description = 'Checks if all translations are there for all languages.';
 
-    public array $excludedDirectories;
-
+    /**
+     * @var array<string, Line>
+     */
     public array $realLines = [];
 
     private LanguagesWithMissingFiles $missingFileChecker;
@@ -56,7 +58,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $topDirectory = $this->option('directory') ?: app()->langPath();
         if (! FileFacade::exists($topDirectory)) {
@@ -104,7 +106,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         /**
          * We check if all keys exists for all languages
          */
-        $this->missingKeyChecker->getMissingKeysTexts($this->realLines, $languages, $topDirectory);
+        $this->missingKeyChecker->getMissingKeysTexts($this->realLines, $languages);
 
         foreach ($this->missingFileChecker->getMissingFileTexts() as $missingFile) {
             $this->error($missingFile);

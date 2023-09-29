@@ -32,6 +32,9 @@ class File
         return Str::replace($fileName, '', $this->fileName);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getContent(): array
     {
         if (Str::endsWith($this->fileName, '.json')) {
@@ -44,9 +47,11 @@ class File
     }
 
     /**
-     * @return array<Line>
+     * @param string $topDirectory
+     * @param array<string> $languages
+     * @return array<string, Line>
      */
-    public function handle($topDirectory, $languages): array
+    public function handle(string $topDirectory, array $languages): array
     {
         $languageExclusion = new LanguageExclusion();
         if ($languageExclusion->shouldExcludeLanguage($this->getLanguageDir())) {
@@ -100,7 +105,11 @@ class File
         return Str::replace(['.php', '.json'], '', $this->fileName);
     }
 
-    public function withoutExtensionAndLanguages(array $languages)
+    /**
+     * @param array<string> $languages
+     * @return string
+     */
+    public function withoutExtensionAndLanguages(array $languages) : string
     {
         $fileName = $this->getWithoutExtension();
         foreach ($languages as $checkingLanguage) {

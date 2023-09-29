@@ -4,10 +4,14 @@ namespace Larswiegers\LaravelTranslationsChecker\Console\Domain\Features;
 
 use Illuminate\Support\Str;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\File;
+use Larswiegers\LaravelTranslationsChecker\Console\Domain\Line;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\TranslationExistsChecker;
 
 class LanguagesWithMissingKeys
 {
+    /**
+     * @var array<string>
+     */
     private array $missingKeysTexts = [];
 
     private TranslationExistsChecker $translationExistChecker;
@@ -17,7 +21,12 @@ class LanguagesWithMissingKeys
         $this->translationExistChecker = new TranslationExistsChecker();
     }
 
-    public function getMissingKeysTexts($realLines, $languages, $topDirectory)
+    /**
+     * @param array<string, Line> $realLines
+     * @param array<string> $languages
+     * @return void
+     */
+    public function getMissingKeysTexts(array $realLines, array $languages) : void
     {
         foreach ($realLines as $line) {
 
@@ -54,6 +63,9 @@ class LanguagesWithMissingKeys
         }
     }
 
+    /**
+     * @return string[]
+     */
     public function getMissingKeys(): array
     {
         return $this->missingKeysTexts;
