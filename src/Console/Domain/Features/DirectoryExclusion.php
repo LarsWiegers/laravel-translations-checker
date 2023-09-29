@@ -8,10 +8,10 @@ class DirectoryExclusion
 {
     public static $excludedDirectories;
 
-    public static function shouldExcludeDirectory($directoryToCheck):bool
+    public static function shouldExcludeDirectory($directoryToCheck): bool
     {
-        foreach(self::$excludedDirectories as $excludedDirectory) {
-            if(Str::contains($directoryToCheck, $excludedDirectory)) {
+        foreach (self::$excludedDirectories as $excludedDirectory) {
+            if (Str::contains($directoryToCheck, $excludedDirectory)) {
                 return true;
             }
         }
@@ -19,15 +19,12 @@ class DirectoryExclusion
         return false;
     }
 
-    /**
-     * @return void
-     */
     public static function getExcludedDirectories($options): void
     {
         if ($options['excludedDirectories'] === 'config') {
-            self::$excludedDirectories = (array)config('translations-checker.excluded_directories', []);
-        } elseif (empty((array)config('translations-checker.excluded_directories', []))) {
-            self::$excludedDirectories = (array)config('translations-checker.excluded_directories', []);
+            self::$excludedDirectories = (array) config('translations-checker.excluded_directories', []);
+        } elseif (empty((array) config('translations-checker.excluded_directories', []))) {
+            self::$excludedDirectories = (array) config('translations-checker.excluded_directories', []);
         } elseif ($options['excludedDirectories'] === 'none') {
             self::$excludedDirectories = [];
         } elseif ($options['excludedDirectories']) {

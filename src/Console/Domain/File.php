@@ -2,41 +2,42 @@
 
 namespace Larswiegers\LaravelTranslationsChecker\Console\Domain;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File as FileFacade;
+use Illuminate\Support\Str;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\LanguageExclusion;
 
 class File
 {
-
     public string $fileName;
 
-    public function __construct(string $fileName) {
+    public function __construct(string $fileName)
+    {
         $this->fileName = $fileName;
     }
 
     public function isLangFile(): bool
     {
-        return !FileFacade::isDirectory($this->fileName) && Str::endsWith($this->fileName, ['.json', '.php']);
+        return ! FileFacade::isDirectory($this->fileName) && Str::endsWith($this->fileName, ['.json', '.php']);
     }
 
-    public function getBaseName() : string
+    public function getBaseName(): string
     {
         return basename($this->fileName);
     }
 
-    public function getLanguageDir() : string
+    public function getLanguageDir(): string
     {
         $fileName = basename($this->fileName);
+
         return Str::replace($fileName, '', $this->fileName);
     }
 
-    public function getContent() : array
+    public function getContent(): array
     {
-        if(Str::endsWith($this->fileName, '.json')) {
+        if (Str::endsWith($this->fileName, '.json')) {
             $lines = json_decode(FileFacade::get($this->fileName), true);
-        }else {
-            $lines = include($this->fileName);
+        } else {
+            $lines = include $this->fileName;
         }
 
         return $lines;
@@ -57,8 +58,8 @@ class File
 
         $realLines = [];
 
-        $language = Str::replace("/", "", Str::replace($topDirectory,'', $this->getLanguageDir()));
-        if(str_contains($fileName, '.json') && in_array(str_replace('.json', '', $fileName), $languages)) {
+        $language = Str::replace('/', '', Str::replace($topDirectory, '', $this->getLanguageDir()));
+        if (str_contains($fileName, '.json') && in_array(str_replace('.json', '', $fileName), $languages)) {
             $language = str_replace('.json', '', $fileName);
         }
 
@@ -66,9 +67,9 @@ class File
             if (is_array($line)) {
                 foreach ($line as $index2 => $line2) {
                     $line = new Line(
-                        Str::replaceLast('/' . $language . '/', '', $this->getLanguageDir()),
+                        Str::replaceLast('/'.$language.'/', '', $this->getLanguageDir()),
                         $fileName,
-                        $key . '**' . $index2,
+                        $key.'**'.$index2,
                         $line2,
                         str_contains($fileName, '.json'),
                         str_contains($fileName, '.php'),
@@ -79,7 +80,7 @@ class File
             } else {
 
                 $line = new Line(
-                    Str::replaceLast('/' . $language . '/', '', $this->getLanguageDir()),
+                    Str::replaceLast('/'.$language.'/', '', $this->getLanguageDir()),
                     $fileName,
                     $key,
                     $line,
@@ -102,8 +103,8 @@ class File
     public function withoutExtensionAndLanguages(array $languages)
     {
         $fileName = $this->getWithoutExtension();
-        foreach($languages as $checkingLanguage) {
-            if(Str::contains($fileName, $checkingLanguage)) {
+        foreach ($languages as $checkingLanguage) {
+            if (Str::contains($fileName, $checkingLanguage)) {
                 $fileName = str_replace($checkingLanguage, '', $fileName);
             }
         }

@@ -4,15 +4,11 @@ namespace Larswiegers\LaravelTranslationsChecker\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File as FileFacade;
-use Illuminate\Support\Str;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\DirectoryExclusion;
-use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\FileExclusion;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\GetLanguages;
-use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\LanguageExclusion;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\LanguagesWithMissingFiles;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\LanguagesWithMissingKeys;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\File;
-use Larswiegers\LaravelTranslationsChecker\Console\Domain\TranslationExistsChecker;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -24,6 +20,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      * @var string
      */
     protected $signature = 'translations:check {--directory=} {--excludedDirectories=config}';
+
     /**
      * The console command description.
      *
@@ -31,18 +28,14 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      */
     protected $description = 'Checks if all translations are there for all languages.';
 
-    /**
-     * @var array
-     */
     public array $excludedDirectories;
 
-    /**
-     * @var array
-     */
     public array $realLines = [];
 
     private LanguagesWithMissingFiles $missingFileChecker;
+
     private LanguagesWithMissingKeys $missingKeyChecker;
+
     private GetLanguages $getLanguages;
 
     /**
@@ -66,8 +59,9 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     public function handle()
     {
         $topDirectory = $this->option('directory') ?: app()->langPath();
-        if (!FileFacade::exists($topDirectory)) {
-            $this->error('The passed directory (' . $topDirectory . ') does not exist.');
+        if (! FileFacade::exists($topDirectory)) {
+            $this->error('The passed directory ('.$topDirectory.') does not exist.');
+
             return $this::FAILURE;
         }
 
@@ -101,8 +95,8 @@ class CheckIfTranslationsAreAllThereCommand extends Command
              * Write to memory, so we can check if all translations are there
              *  Unsure why this rewrite to realLines is needed. but it is.
              */
-//            dump($file->handle($topDirectory, $languages));
-            foreach($file->handle($topDirectory, $languages) as $key => $line) {
+            //            dump($file->handle($topDirectory, $languages));
+            foreach ($file->handle($topDirectory, $languages) as $key => $line) {
                 $this->realLines[$key] = $line;
             }
         }
@@ -117,7 +111,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         }
 
         foreach ($this->missingKeyChecker->getMissingKeys() as $missingTranslation) {
-            $this->error('Missing the translation with key: ' . $missingTranslation);
+            $this->error('Missing the translation with key: '.$missingTranslation);
         }
 
         if (count($this->missingFileChecker->getMissingFileTexts()) === 0 &&

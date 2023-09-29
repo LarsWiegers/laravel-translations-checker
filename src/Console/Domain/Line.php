@@ -5,11 +5,17 @@ namespace Larswiegers\LaravelTranslationsChecker\Console\Domain;
 class Line
 {
     private string $key;
+
     private string $value;
+
     private string $directory;
+
     private string $fileName;
+
     private bool $isJson;
+
     private bool $isPHP;
+
     private string $language;
 
     public function __construct(string $directory, string $fileName, string $key, string $value, bool $isJson, bool $isPHP, string $language)
@@ -24,16 +30,18 @@ class Line
 
     }
 
-    public function getDirectory() {
+    public function getDirectory()
+    {
         return $this->directory;
     }
 
-    public function fileNameWithoutKey() : string
+    public function fileNameWithoutKey(): string
     {
         return str_replace($this->key, '', $this->fileName);
     }
 
-    public function keyWithoutFile() {
+    public function keyWithoutFile()
+    {
         return str_replace($this->fileName, '', $this->key);
     }
 
@@ -41,6 +49,7 @@ class Line
     {
         return $this->value;
     }
+
     public function getKey(): string
     {
         return $this->key;
@@ -48,24 +57,24 @@ class Line
 
     public function getID(): string
     {
-        if($this->isPHP) {
-            return  $this->directory . DIRECTORY_SEPARATOR . $this->language . DIRECTORY_SEPARATOR . $this->getFileName() . '**' . $this->getKey();
-        }elseif($this->isJson) {
-            return $this->directory . $this->language . '**' . $this->getKey();
+        if ($this->isPHP) {
+            return $this->directory.DIRECTORY_SEPARATOR.$this->language.DIRECTORY_SEPARATOR.$this->getFileName().'**'.$this->getKey();
+        } elseif ($this->isJson) {
+            return $this->directory.$this->language.'**'.$this->getKey();
         }
 
-        return $this->directory . $this->fileName . '**' . $this->key;
+        return $this->directory.$this->fileName.'**'.$this->key;
     }
 
     public function getIDButSwapLanguage(string $language): string
     {
-        if($this->isPHP) {
-            return  $this->directory . DIRECTORY_SEPARATOR . $language . DIRECTORY_SEPARATOR . $this->getFileName() . '**' . $this->getKey();
-        }elseif($this->isJson) {
-            return $this->directory . $language . '**' . $this->getKey();
+        if ($this->isPHP) {
+            return $this->directory.DIRECTORY_SEPARATOR.$language.DIRECTORY_SEPARATOR.$this->getFileName().'**'.$this->getKey();
+        } elseif ($this->isJson) {
+            return $this->directory.$language.'**'.$this->getKey();
         }
 
-        return $this->directory . $this->fileName . '**' . $this->key;
+        return $this->directory.$this->fileName.'**'.$this->key;
     }
 
     public function getFileName(): string

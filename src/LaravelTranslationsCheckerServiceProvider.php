@@ -41,9 +41,9 @@ class LaravelTranslationsCheckerServiceProvider extends ServiceProvider
             ], 'lang');*/
 
             // Registering package commands.
-             $this->commands([
-                 CheckIfTranslationsAreAllThereCommand::class,
-             ]);
+            $this->commands([
+                CheckIfTranslationsAreAllThereCommand::class,
+            ]);
         }
     }
 

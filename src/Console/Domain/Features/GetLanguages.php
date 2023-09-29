@@ -4,11 +4,6 @@ namespace Larswiegers\LaravelTranslationsChecker\Console\Domain\Features;
 
 class GetLanguages
 {
-
-    /**
-     * @param string $directory
-     * @return array
-     */
     public function getLanguages(string $directory): array
     {
         $languages = [];
@@ -24,7 +19,7 @@ class GetLanguages
         closedir($handle);
 
         return array_filter($languages, static function ($element) {
-            return !in_array($element, config('translations-checker.exclude_languages'));
+            return ! in_array($element, config('translations-checker.exclude_languages'));
         });
     }
 }

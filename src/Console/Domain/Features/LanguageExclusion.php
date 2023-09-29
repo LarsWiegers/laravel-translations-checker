@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 
 class LanguageExclusion
 {
-    public static function shouldExcludeLanguage($languageDir):bool
+    public static function shouldExcludeLanguage($languageDir): bool
     {
         $excludedLanguages = config('translations-checker.exclude_languages');
 

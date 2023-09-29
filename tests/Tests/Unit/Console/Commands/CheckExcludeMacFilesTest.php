@@ -7,6 +7,7 @@ use Tests\TestCase;
 class CheckExcludeMacFilesTest extends TestCase
 {
     private string $languagesDir = 'tests/resources/lang/exclude_mac_files';
+
     public function setUp(): void
     {
         parent::setUp();
@@ -15,7 +16,7 @@ class CheckExcludeMacFilesTest extends TestCase
     public function testItSkipsTotallyFineIfDSStoreExists()
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->languagesDir . '/ds-store'
+            '--directory' => $this->languagesDir.'/ds-store',
         ]);
 
         $command->assertExitCode(0);
