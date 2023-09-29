@@ -15,14 +15,11 @@ class LanguagesWithMissingFiles
     public array $missingFilesTexts = [];
 
     /**
-     * @param File $file
-     * @param array<string> $languages
-     * @param string $directory
-     * @return void
+     * @param  array<string>  $languages
      */
-    public function getMissingFilesTexts(File $file, array $languages, string $directory) : void
+    public function getMissingFilesTexts(File $file, array $languages, string $directory): void
     {
-        $languagesWithMissingFile = $this->checkIfFileExistsForOtherLanguages($languages, $file->getBaseName(), $directory);
+        $languagesWithMissingFile = $this->checkIfFileExistsForOtherLanguages($languages, $file, $directory);
 
         foreach ($languagesWithMissingFile as $languageWithMissingFile) {
             if (DirectoryExclusion::shouldExcludeDirectory($languageWithMissingFile)) {
@@ -43,17 +40,17 @@ class LanguagesWithMissingFiles
 
     /**
      * @param array<string> $languages
-     * @param string $fileName
+     * @param File $file
      * @param string $baseDirectory
      * @return array<string>
      */
-    private function checkIfFileExistsForOtherLanguages(array $languages, string $fileName, string $baseDirectory): array
+    private function checkIfFileExistsForOtherLanguages(array $languages, File $file, string $baseDirectory): array
     {
         $languagesWhereFileIsMissing = [];
         foreach ($languages as $language) {
             if (
-                ! FileFacade::exists($baseDirectory.'/'.$language.'/'.$fileName)
-                && ! FileFacade::exists($baseDirectory.'/'.$fileName)
+                ! FileFacade::exists($file->replaceLanguage($language, $baseDirectory)) &&
+                ! FileFacade::exists($file->replaceLanguage($language, $baseDirectory).'.json')
             ) {
                 $languagesWhereFileIsMissing[] = $language;
             }

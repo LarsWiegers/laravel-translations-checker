@@ -47,8 +47,7 @@ class File
     }
 
     /**
-     * @param string $topDirectory
-     * @param array<string> $languages
+     * @param  array<string>  $languages
      * @return array<string, Line>
      */
     public function handle(string $topDirectory, array $languages): array
@@ -63,7 +62,7 @@ class File
 
         $realLines = [];
 
-        $language = Str::replace('/', '', Str::replace($topDirectory, '', $this->getLanguageDir()));
+        $language = Str::betweenFirst(Str::replace($topDirectory, '', $this->getLanguageDir()), '/', '/');
         if (str_contains($fileName, '.json') && in_array(str_replace('.json', '', $fileName), $languages)) {
             $language = str_replace('.json', '', $fileName);
         }
@@ -72,7 +71,7 @@ class File
             if (is_array($line)) {
                 foreach ($line as $index2 => $line2) {
                     $line = new Line(
-                        Str::replaceLast('/'.$language.'/', '', $this->getLanguageDir()),
+                        Str::replaceLast('/'.$language, '', $this->getLanguageDir()),
                         $fileName,
                         $key.'**'.$index2,
                         $line2,
@@ -85,7 +84,7 @@ class File
             } else {
 
                 $line = new Line(
-                    Str::replaceLast('/'.$language.'/', '', $this->getLanguageDir()),
+                    Str::replaceLast('/'.$language, '', $this->getLanguageDir()),
                     $fileName,
                     $key,
                     $line,
@@ -106,10 +105,9 @@ class File
     }
 
     /**
-     * @param array<string> $languages
-     * @return string
+     * @param  array<string>  $languages
      */
-    public function withoutExtensionAndLanguages(array $languages) : string
+    public function withoutExtensionAndLanguages(array $languages): string
     {
         $fileName = $this->getWithoutExtension();
         foreach ($languages as $checkingLanguage) {
@@ -119,5 +117,14 @@ class File
         }
 
         return $fileName;
+    }
+
+    public function replaceLanguage(string $language, string $base): string
+    {
+        $withoutBase = Str::replace($base, '', $this->fileName);
+        $langPart = explode('/', $withoutBase)[1];
+        $withoutBase = Str::replace($langPart, $language, $withoutBase);
+
+        return $base.$withoutBase;
     }
 }

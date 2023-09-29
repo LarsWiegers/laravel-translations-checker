@@ -5,10 +5,7 @@ namespace Larswiegers\LaravelTranslationsChecker\Console\Domain;
 class TranslationExistsChecker
 {
     /**
-     * @param array<Line> $realLines
-     * @param Line $line
-     * @param string $language
-     * @return bool
+     * @param  array<Line>  $realLines
      */
     public function translationExistsAsJsonOrAsSubDir(array $realLines, Line $line, string $language): bool
     {

@@ -5,7 +5,6 @@ namespace Larswiegers\LaravelTranslationsChecker\Console\Domain\Features;
 class GetLanguages
 {
     /**
-     * @param string $directory
      * @return array<string>
      */
     public function getLanguages(string $directory): array

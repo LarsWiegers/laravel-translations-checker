@@ -2,6 +2,8 @@
 
 namespace Larswiegers\LaravelTranslationsChecker\Console\Domain;
 
+use Illuminate\Support\Str;
+
 class Line
 {
     private string $key;
@@ -20,7 +22,7 @@ class Line
 
     public function __construct(string $directory, string $fileName, string $key, string $value, bool $isJson, bool $isPHP, string $language)
     {
-        $this->directory = $directory;
+        $this->directory = Str::replaceLast('/', '', $directory);
         $this->fileName = $fileName;
         $this->key = $key;
         $this->value = $value;
@@ -40,7 +42,7 @@ class Line
         return str_replace($this->key, '', $this->fileName);
     }
 
-    public function keyWithoutFile() : string
+    public function keyWithoutFile(): string
     {
         return str_replace($this->fileName, '', $this->key);
     }
@@ -60,10 +62,10 @@ class Line
         if ($this->isPHP) {
             return $this->directory.DIRECTORY_SEPARATOR.$this->language.DIRECTORY_SEPARATOR.$this->getFileName().'**'.$this->getKey();
         } elseif ($this->isJson) {
-            return $this->directory.$this->language.'**'.$this->getKey();
+            return $this->directory.DIRECTORY_SEPARATOR.$this->language.'**'.$this->getKey();
         }
 
-        return $this->directory.$this->fileName.'**'.$this->key;
+        return $this->directory.DIRECTORY_SEPARATOR.$this->fileName.'**'.$this->key;
     }
 
     public function getIDButSwapLanguage(string $language): string
@@ -71,10 +73,10 @@ class Line
         if ($this->isPHP) {
             return $this->directory.DIRECTORY_SEPARATOR.$language.DIRECTORY_SEPARATOR.$this->getFileName().'**'.$this->getKey();
         } elseif ($this->isJson) {
-            return $this->directory.$language.'**'.$this->getKey();
+            return $this->directory.DIRECTORY_SEPARATOR.$language.'**'.$this->getKey();
         }
 
-        return $this->directory.$this->fileName.'**'.$this->key;
+        return $this->directory.DIRECTORY_SEPARATOR.$this->fileName.'**'.$this->key;
     }
 
     public function getFileName(): string

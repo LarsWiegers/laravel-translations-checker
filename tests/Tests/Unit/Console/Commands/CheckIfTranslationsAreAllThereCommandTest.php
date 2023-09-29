@@ -14,6 +14,8 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
 
     public $multipleLangs = 'tests/resources/lang/multi_langs/';
 
+    private $multipleDirectoriesDir = 'tests/resources/lang/multiple_directory_levels/';
+
     /**
      * @dataProvider one_missing_key_provider
      *
@@ -187,6 +189,17 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         ]);
 
         $command->assertExitCode(0);
+    }
+
+    public function test_it_handles_two_levels_down()
+    {
+        $command = $this->artisan('translations:check', [
+            '--directory' => $this->multipleDirectoriesDir.'two_level_down',
+        ]);
+
+        $command->expectsOutput('Missing the translation with key: en.test.test_key');
+
+        $command->assertExitCode(1);
     }
 
     public function one_missing_file_provider(): array

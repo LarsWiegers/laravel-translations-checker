@@ -22,11 +22,10 @@ class LanguagesWithMissingKeys
     }
 
     /**
-     * @param array<string, Line> $realLines
-     * @param array<string> $languages
-     * @return void
+     * @param  array<string, Line>  $realLines
+     * @param  array<string>  $languages
      */
-    public function getMissingKeysTexts(array $realLines, array $languages) : void
+    public function getMissingKeysTexts(array $realLines, array $languages): void
     {
         foreach ($realLines as $line) {
 

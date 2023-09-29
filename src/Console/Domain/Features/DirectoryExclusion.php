@@ -23,8 +23,7 @@ class DirectoryExclusion
     }
 
     /**
-     * @param array<string> $options
-     * @return void
+     * @param  array<string>  $options
      */
     public static function getExcludedDirectories(array $options): void
     {

@@ -10,7 +10,7 @@ class LaravelTranslationsCheckerServiceProvider extends ServiceProvider
     /**
      * Bootstrap the application services.
      */
-    public function boot() : void
+    public function boot(): void
     {
         /*
          * Optional methods to load your package assets
