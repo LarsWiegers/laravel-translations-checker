@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File as FileFacade;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\DirectoryExclusion;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\GetLanguages;
+use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\KeyExclusion;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\LanguagesWithMissingFiles;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\LanguagesWithMissingKeys;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\File;
@@ -20,7 +21,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'translations:check {--directory=} {--excludedDirectories=config}';
+    protected $signature = 'translations:check {--directory=} {--excludedDirectories=config} {--excludedKeys=config}';
 
     /**
      * The console command description.
@@ -66,6 +67,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         }
 
         DirectoryExclusion::getExcludedDirectories($this->options());
+        KeyExclusion::getExcludedKeys($this->options());
 
         $languages = $this->getLanguages->getLanguages($topDirectory);
 

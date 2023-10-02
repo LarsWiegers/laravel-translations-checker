@@ -50,6 +50,10 @@ class LanguagesWithMissingKeys
                     continue;
                 }
 
+                if(KeyExclusion::shouldExclude($line)) {
+                    continue;
+                }
+
                 $file = new File($fileKey);
                 $fileName = $file->withoutExtensionAndLanguages($languages);
 
