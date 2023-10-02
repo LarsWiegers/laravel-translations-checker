@@ -39,9 +39,7 @@ class LanguagesWithMissingFiles
     }
 
     /**
-     * @param array<string> $languages
-     * @param File $file
-     * @param string $baseDirectory
+     * @param  array<string>  $languages
      * @return array<string>
      */
     private function checkIfFileExistsForOtherLanguages(array $languages, File $file, string $baseDirectory): array
