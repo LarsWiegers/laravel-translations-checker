@@ -60,23 +60,23 @@ class Line
     public function getID(): string
     {
         if ($this->isPHP) {
-            return $this->directory.DIRECTORY_SEPARATOR.$this->language.DIRECTORY_SEPARATOR.$this->getFileName().'**'.$this->getKey();
+            return $this->directory.DIRECTORY_SEPARATOR.$this->language.DIRECTORY_SEPARATOR.$this->getFileName().'.'.$this->getKey();
         } elseif ($this->isJson) {
-            return $this->directory.DIRECTORY_SEPARATOR.$this->language.'**'.$this->getKey();
+            return $this->directory.DIRECTORY_SEPARATOR.$this->language.'.'.$this->getKey();
         }
 
-        return $this->directory.DIRECTORY_SEPARATOR.$this->fileName.'**'.$this->key;
+        return $this->directory.DIRECTORY_SEPARATOR.$this->fileName.'.'.$this->key;
     }
 
     public function getIDButSwapLanguage(string $language): string
     {
         if ($this->isPHP) {
-            return $this->directory.DIRECTORY_SEPARATOR.$language.DIRECTORY_SEPARATOR.$this->getFileName().'**'.$this->getKey();
+            return $this->directory.DIRECTORY_SEPARATOR.$language.DIRECTORY_SEPARATOR.$this->getFileName().'.'.$this->getKey();
         } elseif ($this->isJson) {
-            return $this->directory.DIRECTORY_SEPARATOR.$language.'**'.$this->getKey();
+            return $this->directory.DIRECTORY_SEPARATOR.$language.'.'.$this->getKey();
         }
 
-        return $this->directory.DIRECTORY_SEPARATOR.$this->fileName.'**'.$this->key;
+        return $this->directory.DIRECTORY_SEPARATOR.$this->fileName.'.'.$this->key;
     }
 
     public function getFileName(): string

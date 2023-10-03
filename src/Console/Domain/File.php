@@ -68,32 +68,8 @@ class File
         }
 
         foreach ($lines as $key => $line) {
-            if (is_array($line)) {
-                foreach ($line as $index2 => $line2) {
-                    $line = new Line(
-                        Str::replaceLast('/'.$language, '', $this->getLanguageDir()),
-                        $fileName,
-                        $key.'**'.$index2,
-                        $line2,
-                        str_contains($fileName, '.json'),
-                        str_contains($fileName, '.php'),
-                        $language,
-                    );
-                    $realLines[$line->getID()] = $line;
-                }
-            } else {
-
-                $line = new Line(
-                    Str::replaceLast('/'.$language, '', $this->getLanguageDir()),
-                    $fileName,
-                    $key,
-                    $line,
-                    str_contains($fileName, '.json'),
-                    str_contains($fileName, '.php'),
-                    $language,
-                );
-                $realLines[$line->getID()] = $line;
-            }
+            $line = $this->createLine($language, $fileName, $key, $line);
+            $realLines[$line->getID()] = $line;
         }
 
         return $realLines;
@@ -126,5 +102,28 @@ class File
         $withoutBase = Str::replace($langPart, $language, $withoutBase);
 
         return $base.$withoutBase;
+    }
+
+    /**
+     * @param $language
+     * @param string $fileName
+     * @param string $key
+     * @param $line
+     * @return Line
+     */
+    public function createLine($language, string $fileName, string $key, $line): Line
+    {
+        if(is_array($line)) {
+            return $this->createLine($language, $fileName, $key, $line);
+        }
+        return new Line(
+            Str::replaceLast('/' . $language, '', $this->getLanguageDir()),
+            $fileName,
+            $key,
+            $line,
+            str_contains($fileName, '.json'),
+            str_contains($fileName, '.php'),
+            $language,
+        );
     }
 }
