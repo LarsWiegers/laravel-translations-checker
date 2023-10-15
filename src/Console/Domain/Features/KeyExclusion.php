@@ -6,9 +6,8 @@ use Larswiegers\LaravelTranslationsChecker\Console\Domain\Line;
 
 class KeyExclusion
 {
-
     /**
-     * @var array|false|string[]
+     * @var array<string>
      */
     private static array $excludedKeys = [];
 

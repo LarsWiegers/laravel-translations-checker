@@ -2,7 +2,6 @@
 
 namespace Console\Commands;
 
-use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
 class CheckExcludeKeysTest extends TestCase
@@ -17,7 +16,7 @@ class CheckExcludeKeysTest extends TestCase
     public function testItWorksFineIfKeyExistButIsExcluded()
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->exclusionDir .'/excluded_but_existing',
+            '--directory' => $this->exclusionDir.'/excluded_but_existing',
             '--excludedKeys' => 'test.existing_key',
         ]);
 
@@ -28,9 +27,8 @@ class CheckExcludeKeysTest extends TestCase
     {
         config()->set('translations-checker.excluded_keys', null);
 
-
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->exclusionDir .'/excluded_but_missing',
+            '--directory' => $this->exclusionDir.'/excluded_but_missing',
             '--excludedKeys' => 'existing_key',
         ]);
 
@@ -41,9 +39,8 @@ class CheckExcludeKeysTest extends TestCase
     {
         config()->set('translations-checker.excluded_keys', null);
 
-
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->exclusionDir .'/excluded_multi_levels',
+            '--directory' => $this->exclusionDir.'/excluded_multi_levels',
             '--excludedKeys' => 'test.existing_key',
         ]);
 
@@ -55,7 +52,7 @@ class CheckExcludeKeysTest extends TestCase
         config()->set('translations-checker.excluded_keys', null);
 
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->exclusionDir .'/excluded_multi_levels',
+            '--directory' => $this->exclusionDir.'/excluded_multi_levels',
             '--excludedKeys' => 'test.abc.123.sdf.existing_key',
         ]);
 
@@ -69,7 +66,7 @@ class CheckExcludeKeysTest extends TestCase
         ]);
 
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->exclusionDir .'/excluded_multi_levels',
+            '--directory' => $this->exclusionDir.'/excluded_multi_levels',
         ]);
 
         $command->assertExitCode(0);

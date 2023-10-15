@@ -69,7 +69,7 @@ class File
 
         foreach ($lines as $key => $line) {
             $line = $this->createLine($language, $fileName, $key, $line);
-            if($line != null) {
+            if ($line != null) {
                 $realLines[$line->getID()] = $line;
             }
         }
@@ -106,27 +106,20 @@ class File
         return $base.$withoutBase;
     }
 
-    /**
-     * @param $language
-     * @param string $fileName
-     * @param string $key
-     * @param $line
-     * @return Line|null
-     */
-    public function createLine($language, string $fileName, string $key, $line): ?Line
+    public function createLine(string $language, string $fileName, string $key, mixed $line): ?Line
     {
-        if(is_array($line)) {
-            foreach($line as $subKey => $subLine) {
+        if (is_array($line)) {
+            foreach ($line as $subKey => $subLine) {
                 $this->createLine($language, $fileName, $subKey, $subLine);
             }
         }
 
-        if(is_array($line)) {
+        if (is_array($line)) {
             return null;
         }
 
         return new Line(
-            Str::replaceLast('/' . $language, '', $this->getLanguageDir()),
+            Str::replaceLast('/'.$language, '', $this->getLanguageDir()),
             $fileName,
             $key,
             $line,

@@ -6,8 +6,8 @@ return [
             '123' => [
                 'sdf' => [
                     'existing_key' => 'existing_key',
-                ]
-            ]
-        ]
-    ]
+                ],
+            ],
+        ],
+    ],
 ];

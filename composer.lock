@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "898f32b59122092d52e311aa08548d29",
+    "content-hash": "95952a4219b2e9d0240a083c52b6ffe7",
     "packages": [
         {
             "name": "brick/math",
@@ -2142,6 +2142,56 @@
                 }
             ],
             "time": "2023-02-07T16:14:23+00:00"
+        },
+        {
+            "name": "stillat/blade-parser",
+            "version": "v1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Stillat/blade-parser.git",
+                "reference": "10c23730705dd7f5f634c2112e8d2f3e0508eedc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Stillat/blade-parser/zipball/10c23730705dd7f5f634c2112e8d2f3e0508eedc",
+                "reference": "10c23730705dd7f5f634c2112e8d2f3e0508eedc",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^9.36 || ^10.0"
+            },
+            "require-dev": {
+                "brianium/paratest": "*",
+                "laravel/pint": "^1.4",
+                "orchestra/testbench": "*",
+                "phpunit/phpunit": "^8.5 || ^9.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Stillat\\BladeParser\\ServiceProvider",
+                        "Stillat\\BladeParser\\Providers\\ValidatorServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Stillat\\BladeParser\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/Stillat/blade-parser/issues",
+                "source": "https://github.com/Stillat/blade-parser/tree/v1.5.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/johnathonkoster",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-09-12T23:24:15+00:00"
         },
         {
             "name": "symfony/console",
@@ -7830,7 +7880,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.4|^8.0",
+        "php": "^8.1|^8.2",
         "ext-json": "*"
     },
     "platform-dev": [],
