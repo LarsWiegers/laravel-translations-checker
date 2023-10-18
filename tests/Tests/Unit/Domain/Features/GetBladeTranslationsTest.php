@@ -8,6 +8,7 @@ use Tests\TestCase;
 class GetBladeTranslationsTest extends TestCase
 {
     private string $basicDir = 'tests/resources/blade/basic/';
+    private string $complexDir = 'tests/resources/blade/complex/';
 
     public function testItCanGetABasicTranslation()
     {
@@ -44,5 +45,40 @@ class GetBladeTranslationsTest extends TestCase
     {
         $feature = new GetBladeTranslations($this->basicDir.'trans-choice/with-replaces.blade.php');
         $this->assertContains('messages.welcome', $feature->get());
+    }
+
+    public function test_it_handles_a_lot_of_html()
+    {
+        $feature = new GetBladeTranslations($this->complexDir.'a-lot-of-html/index.blade.php');
+
+        $this->assertContains('messages.header', $feature->get());
+        $this->assertContains('messages.welcome', $feature->get());
+        $this->assertContains('messages.about', $feature->get());
+        $this->assertContains('messages.list', $feature->get());
+        $this->assertContains('messages.contact', $feature->get());
+        $this->assertContains('messages.welcome.text', $feature->get());
+        $this->assertContains('messages.footer', $feature->get());
+        $this->assertCount(7, $feature->get());
+    }
+
+    public function test_it_can_run_multiple_times_and_get_the_same_result()
+    {
+        $feature = new GetBladeTranslations($this->complexDir.'a-lot-of-html/index.blade.php');
+        $this->assertCount(7, $feature->get());
+        $this->assertCount(7, $feature->get());
+        $this->assertCount(7, $feature->get());
+    }
+
+    public function test_it_handles_sub_directories()
+    {
+        $feature = new GetBladeTranslations($this->complexDir.'a-lot-of-sub-directories');
+        $this->assertCount(7, $feature->get());
+        $this->assertContains('messages.header', $feature->get());
+        $this->assertContains('messages.welcome', $feature->get());
+        $this->assertContains('messages.about', $feature->get());
+        $this->assertContains('messages.list', $feature->get());
+        $this->assertContains('messages.contact', $feature->get());
+        $this->assertContains('messages.welcome.text', $feature->get());
+        $this->assertContains('messages.footer', $feature->get());
     }
 }

@@ -14,7 +14,7 @@ class GetBladeTranslations
     /**
      * @var array<string>
      */
-    private array $translationsFound;
+    private array $translationsFound = [];
 
     public function __construct(public string $topDirectoryOrFile)
     {
@@ -26,6 +26,10 @@ class GetBladeTranslations
     public function get(): array
     {
         $path = $this->topDirectoryOrFile;
+
+        if(count($this->translationsFound) > 0) {
+            return $this->translationsFound;
+        }
 
         if (FileFacade::isFile($path)) {
             $this->handleFile($path);
