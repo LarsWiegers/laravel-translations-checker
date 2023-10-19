@@ -4,6 +4,7 @@ namespace Larswiegers\LaravelTranslationsChecker;
 
 use Illuminate\Support\ServiceProvider;
 use Larswiegers\LaravelTranslationsChecker\Console\Commands\CheckIfTranslationsAreAllThereCommand;
+use Larswiegers\LaravelTranslationsChecker\Console\Commands\GetBladeTranslationsThatAreNotDefined;
 
 class LaravelTranslationsCheckerServiceProvider extends ServiceProvider
 {
@@ -43,6 +44,7 @@ class LaravelTranslationsCheckerServiceProvider extends ServiceProvider
             // Registering package commands.
             $this->commands([
                 CheckIfTranslationsAreAllThereCommand::class,
+                GetBladeTranslationsThatAreNotDefined::class,
             ]);
         }
     }
