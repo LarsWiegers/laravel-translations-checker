@@ -22,7 +22,7 @@ class GetBladeTranslationsThatAreNotDefined extends Command
      *
      * @var string
      */
-    protected $signature = 'translations:blade {--langDirectory=} {{--bladeDirectory=}} {--excludedDirectories=config} {--excludedKeys=config}';
+    protected $signature = 'translations:blade {--topDirectory=} {--langDirectory=} {{--bladeDirectory=}} {--excludedDirectories=config} {--excludedKeys=config}';
 
     /**
      * The console command description.
@@ -56,6 +56,7 @@ class GetBladeTranslationsThatAreNotDefined extends Command
     {
         $langDirectory = $this->option('langDirectory') ?: app()->langPath();
         $bladeDirectory = $this->option('bladeDirectory') ?: app()->resourcePath();
+        $topDirectory = $this->option('topDirectory') ?: app()->basePath();
 
         if (! FileFacade::exists($langDirectory)) {
             $this->error('The passed directory ('.$langDirectory.') does not exist.');
@@ -67,7 +68,6 @@ class GetBladeTranslationsThatAreNotDefined extends Command
         KeyExclusion::getExcludedKeys($this->options());
 
         $languages = $this->getLanguages->getLanguages($langDirectory);
-
         $path = $langDirectory;
         $rdi = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME);
         foreach (new RecursiveIteratorIterator($rdi, RecursiveIteratorIterator::SELF_FIRST) as $langFile => $info) {
@@ -90,12 +90,28 @@ class GetBladeTranslationsThatAreNotDefined extends Command
              *  Unsure why this rewrite to realLines is needed. but it is.
              */
             //            dump($file->handle($langDirectory, $languages));
-            foreach ($file->handle($langDirectory, $languages) as $key => $line) {
+            foreach ($file->handle($topDirectory, $languages) as $key => $line) {
                 $this->realLines[$key] = $line;
             }
         }
 
         $blade = new GetBladeTranslations($bladeDirectory);
-        dd($this->realLines, $blade->get(), $langDirectory);
+        $bladeTranslations = $blade->get();
+        $bladeTranslationsFound = [];
+        foreach($this->realLines as $line) {
+            foreach ($line->getPossibleUseCases() as $useCase) {
+                foreach($bladeTranslations as $foundTranslation) {
+                    if($foundTranslation === $useCase) {
+                        $line->setIsUsedInBlade(true);
+                        $bladeTranslationsFound[] = $foundTranslation;
+                    }
+                }
+            }
+        }
+
+        $foundInBladeButNotDefined = array_diff($bladeTranslations, $bladeTranslationsFound);
+        dump($foundInBladeButNotDefined);
+
+        return 0;
     }
 }

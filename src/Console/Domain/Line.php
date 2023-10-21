@@ -19,6 +19,7 @@ class Line
     private bool $isPHP;
 
     private string $language;
+    public bool $isUsedInBlade = false;
 
     public function __construct(string $directory, string $fileName, string $key, string $value, bool $isJson, bool $isPHP, string $language)
     {
@@ -82,5 +83,33 @@ class Line
     public function getFileName(): string
     {
         return $this->fileName;
+    }
+
+    private function getFileNameWithoutExtension(): string
+    {
+        return Str::replace(['.php', '.json'], '', $this->fileName);
+    }
+
+    public function getPossibleUseCases(): array
+    {
+        $useCases = [];
+        if ($this->isPHP) {
+            $useCases[] = $this->getFileNameWithoutExtension().'.'.$this->getKey();
+        } elseif ($this->isJson) {
+            $useCases[] = $this->language.'.'.$this->getKey();
+        }
+
+        $useCases[] = $this->directory.DIRECTORY_SEPARATOR.$this->fileName.'.'.$this->key;
+        return $useCases;
+    }
+
+    public function setIsUsedInBlade(bool $bool): void
+    {
+        $this->isUsedInBlade = $bool;
+    }
+
+    public function getIsUsedInBlade(): bool
+    {
+        return $this->isUsedInBlade;
     }
 }

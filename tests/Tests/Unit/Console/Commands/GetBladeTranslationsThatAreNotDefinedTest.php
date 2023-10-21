@@ -7,7 +7,7 @@ use Tests\TestCase;
 
 class GetBladeTranslationsThatAreNotDefinedTest extends TestCase
 {
-    private string $languagesDir = 'tests/resources/blade/command/basic';
+    private string $topDirectory = 'tests/resources/blade/command/basic';
 
     public function setUp(): void
     {
@@ -19,13 +19,13 @@ class GetBladeTranslationsThatAreNotDefinedTest extends TestCase
      *
      * @return void
      */
-    public function testItGetsTheRealLines()
+    public function test_it_can_find_basic_blade_translations_that_are_not_defined()
     {
-        $command = $this->withoutMockingConsoleOutput()->artisan('translations:blade', [
-            '--langDirectory' => $this->languagesDir . '/lang',
-            '--bladeDirectory' => $this->languagesDir . '/resources',
+        $command = $this->artisan('translations:blade', [
+            '--topDirectory' => $this->topDirectory,
+            '--langDirectory' => $this->topDirectory . '/lang',
+            '--bladeDirectory' => $this->topDirectory . '/resources',
         ]);
-        dd(Artisan::output());
 
         $command->assertExitCode(0);
     }
