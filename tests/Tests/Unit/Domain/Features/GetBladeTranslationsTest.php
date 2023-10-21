@@ -8,6 +8,7 @@ use Tests\TestCase;
 class GetBladeTranslationsTest extends TestCase
 {
     private string $basicDir = 'tests/resources/blade/basic/';
+
     private string $complexDir = 'tests/resources/blade/complex/';
 
     public function testItCanGetABasicTranslation()

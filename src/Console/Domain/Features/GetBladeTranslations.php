@@ -27,7 +27,7 @@ class GetBladeTranslations
     {
         $path = $this->topDirectoryOrFile;
 
-        if(count($this->translationsFound) > 0) {
+        if (count($this->translationsFound) > 0) {
             return $this->translationsFound;
         }
 

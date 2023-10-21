@@ -9,8 +9,6 @@ use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\DirectoryExcl
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\GetBladeTranslations;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\GetLanguages;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\KeyExclusion;
-use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\LanguagesWithMissingFiles;
-use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\LanguagesWithMissingKeys;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\File;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Line;
 use RecursiveDirectoryIterator;
@@ -59,8 +57,9 @@ class GetBladeTranslationsThatAreNotDefined extends Command
             $topDirectory = $this->getTopDirectory();
             $langDirectory = $this->getLangDirectory($topDirectory);
             $bladeDirectory = $this->getBladeDirectory($topDirectory);
-        }catch(Exception $exception) {
+        } catch (Exception $exception) {
             $this->error($exception->getMessage());
+
             return $this::FAILURE;
         }
 
@@ -75,7 +74,7 @@ class GetBladeTranslationsThatAreNotDefined extends Command
             /**
              * Makes sure we don't check any stray files left in the directory
              */
-            if (!$file->isLangFile()) {
+            if (! $file->isLangFile()) {
                 continue;
             }
             /**
@@ -97,10 +96,10 @@ class GetBladeTranslationsThatAreNotDefined extends Command
         $blade = new GetBladeTranslations($bladeDirectory);
         $bladeTranslations = $blade->get();
         $bladeTranslationsFound = [];
-        foreach($this->realLines as $line) {
+        foreach ($this->realLines as $line) {
             foreach ($line->getPossibleUseCases() as $useCase) {
-                foreach($bladeTranslations as $foundTranslation) {
-                    if($foundTranslation === $useCase) {
+                foreach ($bladeTranslations as $foundTranslation) {
+                    if ($foundTranslation === $useCase) {
                         $line->setIsUsedInBlade(true);
                         $bladeTranslationsFound[] = $foundTranslation;
                     }
@@ -111,25 +110,23 @@ class GetBladeTranslationsThatAreNotDefined extends Command
         $foundInBladeButNotDefined = array_diff($bladeTranslations, $bladeTranslationsFound);
 
         foreach ($foundInBladeButNotDefined as $missingTranslation) {
-            $this->error('The translation: "'.$missingTranslation . '" is used in blade but not defined in the language files.');
+            $this->error('The translation: "'.$missingTranslation.'" is used in blade but not defined in the language files.');
         }
 
         return count($foundInBladeButNotDefined) > 0 ? $this::FAILURE : $this::SUCCESS;
     }
 
     /**
-     * @param mixed $topDirectory
-     * @return array|bool|string|null
      * @throws Exception
      */
-    public function getBladeDirectory(mixed $topDirectory): string|array|bool|null
+    public function getBladeDirectory(string $topDirectory): ?string
     {
-        if($this->option('langDirectory') === 'config') {
+        if ($this->option('langDirectory') === 'config') {
             $bladeDirectory = config('translations-checker.blade_directory');
-        }elseif ($this->option('bladeDirectory')) {
+        } elseif ($this->option('bladeDirectory')) {
             $bladeDirectory = $this->option('bladeDirectory');
         } elseif ($topDirectory !== '') {
-            $bladeDirectory = $topDirectory . '/resources/views';
+            $bladeDirectory = $topDirectory.'/resources/views';
         } else {
             $bladeDirectory = app()->resourcePath();
         }
@@ -142,18 +139,16 @@ class GetBladeTranslationsThatAreNotDefined extends Command
     }
 
     /**
-     * @param bool|array|string $topDirectory
-     * @return array|bool|string|null
      * @throws Exception
      */
-    public function getLangDirectory(bool|array|string $topDirectory): string|array|bool|null
+    public function getLangDirectory(string $topDirectory): ?string
     {
-        if($this->option('langDirectory') === 'config') {
+        if ($this->option('langDirectory') === 'config') {
             $langDirectory = config('translations-checker.lang_directory');
-        }else if ($this->option('langDirectory')) {
+        } elseif ($this->option('langDirectory')) {
             $langDirectory = $this->option('langDirectory');
-        }else if ($topDirectory !== '') {
-            $langDirectory = $topDirectory . '/lang';
+        } elseif ($topDirectory !== '') {
+            $langDirectory = $topDirectory.'/lang';
         } else {
             $langDirectory = app()->langPath();
         }
@@ -166,10 +161,9 @@ class GetBladeTranslationsThatAreNotDefined extends Command
     }
 
     /**
-     * @return bool|array|string
      * @throws Exception
      */
-    private function getTopDirectory(): bool|array|string
+    private function getTopDirectory(): string
     {
         $topDirectory = $this->option('topDirectory') ?: app()->basePath();
 

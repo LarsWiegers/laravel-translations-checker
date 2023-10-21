@@ -19,6 +19,7 @@ class Line
     private bool $isPHP;
 
     private string $language;
+
     public bool $isUsedInBlade = false;
 
     public function __construct(string $directory, string $fileName, string $key, string $value, bool $isJson, bool $isPHP, string $language)
@@ -90,6 +91,9 @@ class Line
         return Str::replace(['.php', '.json'], '', $this->fileName);
     }
 
+    /**
+     * @return array<string>
+     */
     public function getPossibleUseCases(): array
     {
         $useCases = [];
@@ -100,6 +104,7 @@ class Line
         }
 
         $useCases[] = $this->directory.DIRECTORY_SEPARATOR.$this->fileName.'.'.$this->key;
+
         return $useCases;
     }
 
