@@ -57,6 +57,9 @@ class GetBladeTranslations
             if ($node instanceof EchoNode) {
                 $echoNodeContent = $node->innerContent;
 
+                // Move all text to a single line
+                $echoNodeContent = preg_replace("/[\r\n]*/","",$echoNodeContent);
+
                 if (Str::contains($node->innerContent, '__(')) {
                     $echoNodeContent = str_replace('__(\'', '', $echoNodeContent);
                     $echoNodeContent = str_replace('__("', '', $echoNodeContent);
@@ -76,6 +79,11 @@ class GetBladeTranslations
                         $echoNodeContent = substr($echoNodeContent, 0, strpos($echoNodeContent, '"'));
                     }
                 }
+
+                $echoNodeContent = str_replace('\'', '', $echoNodeContent);
+                $echoNodeContent = str_replace('"', '', $echoNodeContent);
+                $echoNodeContent = str_replace('. .', '.', $echoNodeContent);
+
 
                 $this->translationsFound[] = $echoNodeContent;
             }
