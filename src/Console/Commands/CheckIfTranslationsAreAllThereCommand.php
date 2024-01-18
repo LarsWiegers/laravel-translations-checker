@@ -123,9 +123,9 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                         continue;
                     }
 
-                    if(Str::endsWith($fileKey, '.json')) {
+                    if (in_array($fileName, $languages)) {
                         $missing[] = $language . '.' . $keyWithoutFile;
-                    }else {
+                    } else {
                         $missing[] = $language . '.' . $fileName . '.' . $keyWithoutFile;
                     }
 
