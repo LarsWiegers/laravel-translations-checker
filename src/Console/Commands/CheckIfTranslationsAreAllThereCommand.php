@@ -100,7 +100,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                 $this->handleFile($languageDir, $langFile);
             }
         }
-
+        $missingFiles = array_unique($missingFiles);
 
         $missing = [];
         foreach ($this->realLines as $key => $line) {
@@ -119,30 +119,24 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                 if (!$exists) {
                     $fileName = Str::replace(['.php', '.json'], '', $fileKey);
 
-                    foreach($languages as $checkingLanguage) {
-                        if(Str::contains($fileName, $checkingLanguage)) {
-                            $fileName = str_replace($checkingLanguage, '', $fileName);
-                        }
-                    }
-
                     if(in_array($language, self::EXCLUDE_MAC_FILES)) {
                         continue;
                     }
 
-                    if(Str::contains($fileKey, $languages)) {
+                    if (in_array($fileName, $languages)) {
                         $missing[] = $language . '.' . $keyWithoutFile;
-                    }else {
+                    } else {
                         $missing[] = $language . '.' . $fileName . '.' . $keyWithoutFile;
                     }
 
                 }
             }
         }
+        $missing = array_unique($missing);
 
         foreach ($missingFiles as $missingFile) {
             $this->error($missingFile);
         }
-
 
         foreach ($missing as $missingTranslation) {
             $this->error('Missing the translation with key: ' . $missingTranslation);
@@ -180,14 +174,8 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             return;
         }
 
-        foreach ($lines as $index => $line) {
-            if (is_array($line)) {
-                foreach ($line as $index2 => $line2) {
-                    $this->realLines[$languageDir . $fileName . '.' . $index . '**' . $index2] = $line2;
-                }
-            } else {
-                $this->realLines[$languageDir  . $fileName . '**' . $index] = $line;
-            }
+        foreach ($this->flatLines($lines) as $index => $line) {
+            $this->realLines[$languageDir.$fileName.'**'.$index] = $line;
         }
     }
 
@@ -218,9 +206,9 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
         closedir($handle);
 
-        return array_filter($languages, static function ($element) {
+        return array_unique(array_filter($languages, static function ($element) {
             return ! in_array($element, config('translations-checker.exclude_languages'));
-        });
+        }));
     }
 
     /**
@@ -268,5 +256,22 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         $fileKeyWithoutLangComponent = explode('.', $fileKey, 2)[1];
         $existsAsJSONValue = array_key_exists($directory . DIRECTORY_SEPARATOR . $language . '.' . $fileKeyWithoutLangComponent . '**' . $keyWithoutFile, $this->realLines);
         return $existsAsSubDirValue || $existsAsJSONValue;
+    }
+
+    private function flatLines(array $lines): array
+    {
+        $result = [];
+
+        foreach ($lines as $key => $line) {
+            if (is_array($line)) {
+                foreach ($this->flatLines($line) as $key2 => $line2) {
+                    $result[$key.'.'.$key2] = $line2;
+                }
+            } else {
+                $result[$key] = $line;
+            }
+        }
+
+        return $result;
     }
 }
