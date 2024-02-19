@@ -48,4 +48,6 @@ return [
    |
    */
     'excluded_keys' => [],
+
+    'translation_service' => 'http://localhost:5000'
 ];

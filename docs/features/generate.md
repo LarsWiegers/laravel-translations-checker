@@ -17,7 +17,23 @@ missing translations in other languages than your main language.
 ### Step 2
 Generate the missing translations using an translation service.
 
-## Step 3
+#### Supported translation services
+
+##### Free
+1. https://github.com/LibreTranslate/LibreTranslate
+Running LibreTranslate locally is easy, just run the following command:
+```bash
+docker run -d -p 5000:5000 libretranslate/libretranslate
+```
+And set the folowing in your laravel-translation-checker config file:
+```php
+'translation_service' => 'http://localhost:5000/translate',
+```
+
+#### Paid
+
+
+## Step 33
 Add the translations to your language files.
 
 ## Step 4

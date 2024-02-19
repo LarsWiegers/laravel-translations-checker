@@ -21,3 +21,7 @@ Missing the translation with key: nl.passwords.user
 ## Why is it important
 It is easy to forget to add a translation in all languages, or maybe you are waiting on a translator to translate a certain key.
 This command will help you find those missing translations.
+
+## Exit code
+The command will exit with code 1 if there are translations defined in 1 language but not in others.
+This way you can use it in your CI to make sure you don't push code with not defined translations.

@@ -11,10 +11,26 @@ php artisan translations:check
 ```
 
 ### What does the output look like?
+Lets say you have a blade file with the following line:
+```php
+{{ __('welcome.heading') }}
 ```
-
+```php
+return [
+    'welcome' => [
+        'heading' => 'Welcome to our website!',
+    ],
+];
+```
+The output will look like this:
+```
+'The translation: "welcome.heading" is used in blade but not defined in the language files.');
 ```
 
 ## Why is it important
 Adding translations during development takes you away from your flow. Which we all know is very important. That is why
 we recommend running this command before pushing or in CI that way you only have to define the translations once.
+
+## Exit code
+The command will exit with code 1 if there are translations used in blade that are not defined in the language files.
+This way you can use it in your CI to make sure you don't push code with undefined translations.
