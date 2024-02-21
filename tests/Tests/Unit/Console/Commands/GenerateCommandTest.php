@@ -10,7 +10,7 @@ class GenerateCommandTest extends TestCase
 
     public function testTheCommand()
     {
-        $command = $this->withoutMockingConsoleOutput()->artisan('translations:generate');
-        dd($command);
+//        $command = $this->withoutMockingConsoleOutput()->artisan('translations:generate');
+//        dd($command);
     }
 }

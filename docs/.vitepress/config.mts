@@ -12,11 +12,13 @@ export default defineConfig({
     ],
 
     sidebar: [
+      { text: 'Supported versions', link: '/supported-versions' },
       {
         text: 'Tutorials',
         items: [
           { text: 'Quick start', link: '/tutorials/quick-start' },
-          { text: 'Supported versions', link: '/supported-versions' },
+          { text: 'Running in CI', link: '/tutorials/running-in-ci' },
+
         ]
       },
       {

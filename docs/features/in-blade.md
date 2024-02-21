@@ -7,7 +7,7 @@ This saves time during development and makes sure you don't have to go back and 
 Use the command below, it is that easy!
 
 ```php
-php artisan translations:check
+php artisan translations:blade
 ```
 
 ### What does the output look like?
@@ -15,11 +15,11 @@ Lets say you have a blade file with the following line:
 ```php
 {{ __('welcome.heading') }}
 ```
+and the following translation file (welcome.php):
 ```php
 return [
-    'welcome' => [
-        'heading' => 'Welcome to our website!',
-    ],
+    'paragraph' => 'Test paragraph!'
+    // See that the heading key is not here
 ];
 ```
 The output will look like this:
