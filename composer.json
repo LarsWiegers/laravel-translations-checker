@@ -21,7 +21,7 @@
         "illuminate/support": "^8.0|^9.0|^10.0|^11.0",
         "guzzlehttp/guzzle": "^7.5",
         "jefs42/libretranslate": "^1.1",
-        "stillat/blade-parser": "^1.5"
+        "stillat/blade-parser": "^v1.6.1"
     },
     "require-dev": {
         "laravel/pint": "^1.13",
