@@ -59,6 +59,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      */
     public function handle(): int
     {
+
         $topDirectory = $this->option('directory') ?: app()->langPath();
         if (! FileFacade::exists($topDirectory)) {
             $this->error('The passed directory ('.$topDirectory.') does not exist.');
@@ -74,6 +75,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         $path = $topDirectory;
         $rdi = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME);
         foreach (new RecursiveIteratorIterator($rdi, RecursiveIteratorIterator::SELF_FIRST) as $langFile => $info) {
+
             $file = new File($langFile);
             /**
              * Makes sure we don't check any stray files left in the directory

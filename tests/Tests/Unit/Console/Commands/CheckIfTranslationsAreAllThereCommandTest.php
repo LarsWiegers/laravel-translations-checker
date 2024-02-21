@@ -8,6 +8,7 @@ use Tests\TestCase;
 
 final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
 {
+    const multipleDirectoriesDir = 'tests/resources/lang/multiple_directory_levels/';
     public $basicDir = 'tests/resources/lang/basic/';
 
     const basicDir = "tests/resources/lang/basic/";
