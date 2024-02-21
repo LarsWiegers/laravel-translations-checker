@@ -10,11 +10,9 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
 {
     public $basicDir = 'tests/resources/lang/basic/';
 
-    public $jsonDir = 'tests/resources/lang/json/';
-
-    public $multipleLangs = 'tests/resources/lang/multi_langs/';
-
-    private $multipleDirectoriesDir = 'tests/resources/lang/multiple_directory_levels/';
+    const basicDir = "tests/resources/lang/basic/";
+    const jsonDir = "tests/resources/lang/json/";
+    const multipleLangs  = "tests/resources/lang/multi_langs/";
 
     /**
      * @dataProvider one_missing_key_provider
@@ -75,7 +73,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
     public function test_it_handles_a_single_language()
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->multipleLangs.'one_language',
+            '--directory' => self::multipleLangs . 'one_language'
         ]);
 
         $command->assertExitCode(0);
@@ -84,7 +82,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
     public function test_it_handles_two_languages()
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->multipleLangs.'two_languages',
+            '--directory' => self::multipleLangs . 'two_languages'
         ]);
 
         $command->assertExitCode(0);
@@ -93,7 +91,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
     public function test_it_handles_ten_languages()
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->multipleLangs.'ten_languages',
+            '--directory' => self::multipleLangs . 'ten_languages'
         ]);
 
         $command->assertExitCode(0);
@@ -152,7 +150,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
     public function test_it_handles_one_toplevel_language_file()
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->jsonDir.'toplevel_json_files/one',
+            '--directory' => self::jsonDir . 'toplevel_json_files/one',
         ]);
 
         $command->expectsOutput('✔ All translations are okay!');
@@ -163,7 +161,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
     public function test_it_handles_two_toplevel_language_file()
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->jsonDir.'toplevel_json_files/two',
+            '--directory' => self::jsonDir . 'toplevel_json_files/two',
         ]);
 
         $command->expectsOutput('✔ All translations are okay!');
@@ -174,7 +172,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
     public function test_it_handles_missing_key_in_toplevel_language_file()
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->jsonDir.'toplevel_json_files/missing_key_in_one_lang',
+            '--directory' => self::jsonDir . 'toplevel_json_files/missing_key_in_one_lang',
         ]);
 
         $command->expectsOutput('Missing the translation with key: nl.test_key');
@@ -185,7 +183,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
     public function test_it_handles_slashes_in_json_keys()
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->jsonDir.'toplevel_json_files/slashes_in_title',
+            '--directory' => self::jsonDir . 'toplevel_json_files/slashes_in_title',
         ]);
 
         $command->assertExitCode(0);
@@ -194,7 +192,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
     public function test_it_handles_two_levels_down()
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->multipleDirectoriesDir.'two_level_down',
+            '--directory' => self::multipleDirectoriesDir.'two_level_down',
         ]);
 
         $command->expectsOutput('Missing the translation with key: en.test.test_key');
@@ -202,35 +200,35 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         $command->assertExitCode(1);
     }
 
-    public function one_missing_file_provider(): array
+    public static function one_missing_file_provider(): array
     {
         return [
-            [$this->basicDir.'one_missing_file'],
-            [$this->jsonDir.'one_missing_file'],
+            [self::basicDir . 'one_missing_file'],
+            [self::jsonDir . 'one_missing_file'],
         ];
     }
 
-    public function one_missing_key_provider(): array
+    public static function one_missing_key_provider(): array
     {
         return [
-            [$this->basicDir.'one_missing_key'],
-            [$this->jsonDir.'one_missing_key'],
+            [self::basicDir . 'one_missing_key'],
+            [self::jsonDir . 'one_missing_key'],
         ];
     }
 
-    public function two_missing_keys_provider(): array
+    public static function two_missing_keys_provider(): array
     {
         return [
-            [$this->basicDir.'two_missing_keys'],
-            [$this->jsonDir.'two_missing_keys'],
+            [self::basicDir . 'two_missing_keys'],
+            [self::jsonDir . 'two_missing_keys'],
         ];
     }
 
-    public function zero_missing_key_provider(): array
+    public static function zero_missing_key_provider(): array
     {
         return [
-            [$this->basicDir.'zero_missing_keys'],
-            [$this->jsonDir.'zero_missing_keys'],
+            [self::basicDir . 'zero_missing_keys'],
+            [self::jsonDir . 'zero_missing_keys'],
         ];
     }
 }
