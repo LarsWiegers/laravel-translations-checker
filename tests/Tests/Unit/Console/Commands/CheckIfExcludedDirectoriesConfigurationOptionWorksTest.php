@@ -7,6 +7,7 @@ use Tests\TestCase;
 class CheckIfExcludedDirectoriesConfigurationOptionWorksTest extends TestCase
 {
     private string $languagesDir = 'tests/resources/lang/excluded_directories';
+
     private string $excludedLanguagesDir = 'excluded';
 
     public function testIfConfigurationOptionWorks()
@@ -14,7 +15,7 @@ class CheckIfExcludedDirectoriesConfigurationOptionWorksTest extends TestCase
         config()->set('translations-checker.excluded_directories', [$this->excludedLanguagesDir]);
 
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->languagesDir
+            '--directory' => $this->languagesDir,
         ]);
 
         $command->assertExitCode(0);

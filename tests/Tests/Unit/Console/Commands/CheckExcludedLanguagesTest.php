@@ -7,6 +7,7 @@ use Tests\TestCase;
 class CheckExcludedLanguagesTest extends TestCase
 {
     private string $languagesDir = 'tests/resources/lang/exclude_langs';
+
     public function setUp(): void
     {
         parent::setUp();
@@ -14,6 +15,7 @@ class CheckExcludedLanguagesTest extends TestCase
 
     /**
      * Test excluded languages.
+     *
      * @return void
      */
     public function testTheCommandShouldNotProduceAnErrorIfOtherLangsExcluded()
@@ -21,7 +23,7 @@ class CheckExcludedLanguagesTest extends TestCase
         config()->set('translations-checker.exclude_languages', ['fr', 'ga']);
 
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->languagesDir
+            '--directory' => $this->languagesDir,
         ]);
 
         $command->assertExitCode(0);
@@ -29,12 +31,13 @@ class CheckExcludedLanguagesTest extends TestCase
 
     /**
      * Test without exclusion.
+     *
      * @return void
      */
     public function testTheCommandShouldThrowAnErrorIfOtherLangsNotExcluded()
     {
         $command = $this->artisan('translations:check', [
-            '--directory' => $this->languagesDir
+            '--directory' => $this->languagesDir,
         ]);
 
         $command->assertExitCode(1);

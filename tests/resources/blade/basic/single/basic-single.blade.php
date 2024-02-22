@@ -1,0 +1,1 @@
+{{__('messages.welcome')}}

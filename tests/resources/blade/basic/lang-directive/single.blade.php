@@ -1,0 +1,1 @@
+@lang(__("messages.welcome"))

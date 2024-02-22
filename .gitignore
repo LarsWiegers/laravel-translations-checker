@@ -1,3 +1,6 @@
 vendor/
 .idea
 .phpunit.result.cache
+docs/.vitepress/cache
+docs/.vitepress/dist
+node_modules/
