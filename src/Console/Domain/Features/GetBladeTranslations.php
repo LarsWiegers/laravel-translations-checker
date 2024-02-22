@@ -54,6 +54,7 @@ class GetBladeTranslations
         // check if file is blade
         $parser = new BladeParser($bladeFile);
         foreach ($parser->parse() as $node) {
+            dump($node);
             if ($node instanceof EchoNode) {
                 $echoNodeContent = $node->innerContent;
 
