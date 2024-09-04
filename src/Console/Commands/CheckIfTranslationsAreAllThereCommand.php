@@ -15,7 +15,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'translations:check {--directory=} {--excludedDirectories=config}';
+    protected $signature = 'translations:check {--directory=} {--excludedDirectories=config} {--excludedFileExtensions=config}';
     /**
      * The console command description.
      *
@@ -34,6 +34,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
     public array $realLines = [];
 
     const EXCLUDE_MAC_FILES = ['.DS_Store'];
+    private array $excludedFileExtensions = [];
 
     /**
      * Create a new command instance.
@@ -64,6 +65,16 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             $this->excludedDirectories = [];
         }
 
+        if ($this->option('excludedFileExtensions') === 'config') {
+            $this->excludedFileExtensions = (array)config('translations-checker.excluded_file_extensions', []);
+        } elseif ($this->option('excludedFileExtensions') === 'none') {
+            $this->excludedFileExtensions = [];
+        } elseif ($this->option('excludedFileExtensions')) {
+            $this->excludedFileExtensions = explode(',', $this->option('excludedFileExtensions'));
+        } else {
+            $this->excludedFileExtensions = [];
+        }
+
         if (!$this->checkIfDirectoryExists($directory)) {
             $this->error('The passed directory (' . $directory . ') does not exist.');
             return $this::FAILURE;
@@ -75,8 +86,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         $path = $directory;
         $rdi = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::KEY_AS_PATHNAME);
         foreach (new RecursiveIteratorIterator($rdi, RecursiveIteratorIterator::SELF_FIRST) as $langFile => $info) {
-
-            if (!File::isDirectory($langFile) && Str::endsWith($langFile, ['.json', '.php'])) {
+            if (!File::isDirectory($langFile) && Str::endsWith($langFile, ['.json', '.php']) && !$this->fileIsExcluded($langFile)) {
                 $fileName = basename($langFile);
                 $languageDir = Str::replace($fileName, '', $langFile);
 
@@ -273,5 +283,11 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         }
 
         return $result;
+    }
+
+    private function fileIsExcluded($langFile): bool
+    {
+        $extension = pathinfo($langFile, PATHINFO_EXTENSION);
+        return in_array($extension, $this->excludedFileExtensions);
     }
 }
