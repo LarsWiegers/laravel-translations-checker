@@ -43,7 +43,10 @@
 
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": false
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable" : true,
