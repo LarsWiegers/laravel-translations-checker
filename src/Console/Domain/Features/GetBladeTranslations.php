@@ -11,13 +11,15 @@ use Stillat\BladeParser\Nodes\EchoNode;
 
 class GetBladeTranslations
 {
+    public string $topDirectoryOrFile;
     /**
      * @var array<string>
      */
     private array $translationsFound = [];
 
-    public function __construct(public string $topDirectoryOrFile)
+    public function __construct(string $topDirectoryOrFile)
     {
+        $this->topDirectoryOrFile = $topDirectoryOrFile;
     }
 
     /**
@@ -26,7 +28,6 @@ class GetBladeTranslations
     public function get(): array
     {
         $path = $this->topDirectoryOrFile;
-
         if (count($this->translationsFound) > 0) {
             return $this->translationsFound;
         }
@@ -54,7 +55,6 @@ class GetBladeTranslations
         // check if file is blade
         $parser = new BladeParser($bladeFile);
         foreach ($parser->parse() as $node) {
-            dump($node);
             if ($node instanceof EchoNode) {
                 $echoNodeContent = $node->innerContent;
 

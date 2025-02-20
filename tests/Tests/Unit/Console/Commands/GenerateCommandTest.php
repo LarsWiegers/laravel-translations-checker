@@ -6,12 +6,16 @@ use Tests\TestCase;
 
 class GenerateCommandTest extends TestCase
 {
-    private string $languagesDir = 'tests/resources/lang/exclude_langs';
-
-    public function testTheCommand()
+    public function test_it_can_generate_a_translated_version_of_1_file()
     {
-//        $command = $this->withoutMockingConsoleOutput()->artisan('translations:generate');
-//        dd($command);
+        $generatedFileName = 'test_it_can_generate_a_translated_version_of_1_file.php';
+        $command = $this->withoutMockingConsoleOutput()->artisan('translations:generate', [
+            '--inputFile' => 'tests/resources/lang/basic/one_missing_file/en/test.php',
+            '--sourceLanguage' => 'en',
+            '--targetLanguage' => 'nl',
+            '--outputFile' => 'tests/resources/generated/' . $generatedFileName,
+        ]);
+        dd($command);
         $this->assertTrue(true);
     }
 }

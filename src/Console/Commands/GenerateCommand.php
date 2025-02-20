@@ -15,6 +15,7 @@ use Larswiegers\LaravelTranslationsChecker\Console\Domain\Line;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Jefs42\LibreTranslate;
+use function DI\string;
 
 class GenerateCommand extends Command
 {
@@ -23,7 +24,7 @@ class GenerateCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'translations:generate';
+    protected $signature = 'translations:generate {--inputFile=} {--outputFile=} {--sourceLanguage=} {--targetLanguage=}';
 
     /**
      * The console command description.
@@ -31,6 +32,7 @@ class GenerateCommand extends Command
      * @var string
      */
     protected $description = 'Generate missing translations';
+    public $libreHost = 'http://127.0.0.1:5000';
 
     /**
      * Create a new command instance.
@@ -47,16 +49,45 @@ class GenerateCommand extends Command
      */
     public function handle(): int
     {
+        $inputFile = $this->option('inputFile');
+        $outputFile = $this->option('outputFile');
+        $sourceLanguage = $this->option('sourceLanguage');
+        $targetLanguage = $this->option('targetLanguage');
 
-        $translator = new LibreTranslate("https://libretranslate.com/translate", 5000);
+
+        try {
+            $file = $this->loadFile($inputFile);
+
+            foreach($file->getContent() as $key => $value) {
+                $translatedValue = $this->translateString($value, $sourceLanguage, $targetLanguage);
+                dd($translatedValue);
+            }
+
+        }catch(\Exception $exception) {
+            dd($exception);
+        }
 //        $response = Http::post(config('translations-checker.translation_service') . '/translate', [
 //            "q" => "Hello!",
 //            "source" => "en",
 //            "target" => "es"
 //        ]);
 //        dd($response);
-        dd($translator);
 
         return 0;
+    }
+
+    private function translateString(string $string, string $sourceLanguage, string $targetLanguage): string
+    {
+        $response = Http::post($this->libreHost . '/translate', [
+            'q' => $string,
+            'source' => $sourceLanguage,
+            'target' => $targetLanguage,
+        ]);
+        return $response->json()['translatedText'];
+    }
+
+    private function loadFile(?string $inputFile): File
+    {
+        return new File($inputFile);
     }
 }

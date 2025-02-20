@@ -57,7 +57,7 @@ class GetBladeTranslationsTest extends TestCase
     }
     public function testDoubleQuotesMultiLine()
     {
-        $feature = new GetBladeTranslations($this->basicDir . 'multi-line/single.blade.php');
+        $feature = new GetBladeTranslations($this->basicDir . 'multi-line/basic-single.blade.php');
         $this->assertContains('messages.hello', $feature->get());
         $this->assertCount(1, $feature->get());
     }
