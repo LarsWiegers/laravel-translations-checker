@@ -302,4 +302,34 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         $extension = pathinfo($langFile, PATHINFO_EXTENSION);
         return in_array($extension, $this->excludedFileExtensions);
     }
+
+    /**
+     * Check for empty translations recursively
+     *
+     * @param array $lines
+     * @param string $language
+     * @param string $fileName
+     * @param string $prefix
+     * @return void
+     */
+    private function checkForEmptyTranslations($lines, $language, $fileName, $prefix = ''): void
+    {
+
+        foreach ($lines as $key => $value) {
+            $currentKey = $prefix ? "$prefix.$key" : $key;
+
+            if (is_array($value)) {
+                $this->checkForEmptyTranslations($value, $language, $fileName, $currentKey);
+            } else {
+                // Check if value is empty (empty string, null, or false)
+                if (trim($value) === '' || $value === null || $value === false) {
+                    $this->emptyTranslations[] = [
+                        'language' => $language,
+                        'file' => Str::replace(['.php', '.json'], '', $fileName),
+                        'key' => $currentKey,
+                    ];
+                }
+            }
+        }
+    }
 }

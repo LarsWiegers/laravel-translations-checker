@@ -61,7 +61,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
      *
      * @return void
      */
-    public function test_it_fails_if_value_is_missing($directory)
+    public function test_it_fails_if_value_is_empty($directory)
     {
         $command = $this->artisan('translations:check', [
             '--directory' => $directory
@@ -229,11 +229,11 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         ];
     }
 
-    public function one_missing_value_provider(): array
+    public static function one_missing_value_provider(): array
     {
         return [
-            [$this->basicDir . 'one_missing_value'],
-            [$this->jsonDir . 'one_missing_value'],
+            [self::basicDir . 'one_missing_value'],
+            [self::jsonDir . 'one_missing_value'],
         ];
     }
 }
