@@ -33,6 +33,11 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      */
     public array $realLines = [];
 
+    /**
+     * @var array
+     */
+    public array $emptyTranslations = [];
+
     const EXCLUDE_MAC_FILES = ['.DS_Store'];
     private array $excludedFileExtensions = [];
 
@@ -152,11 +157,15 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             $this->error('Missing the translation with key: ' . $missingTranslation);
         }
 
+        foreach ($this->emptyTranslations as $emptyTranslation) {
+            $this->error("Empty translation found in: {$emptyTranslation['language']}.{$emptyTranslation['file']} -> {$emptyTranslation['key']}");
+        }
+
         if (count($missingFiles) === 0 && count($missing) === 0) {
             $this->info('✔ All translations are okay!');
         }
 
-        return count($missing) > 0 || count($missingFiles) > 0 ? $this::FAILURE : $this::SUCCESS;
+        return count($missing) > 0 || count($missingFiles) > 0 || count($this->emptyTranslations) > 0 ? $this::FAILURE : $this::SUCCESS;
     }
 
     public function handleFile($languageDir, $langFile): void
@@ -172,6 +181,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         }
 
         $fileName = basename($langFile);
+        $language = Str::afterLast(rtrim($languageDir, '/'), '/');
 
         if(Str::endsWith($fileName, '.json')) {
             $lines = json_decode(File::get($langFile), true);
@@ -183,6 +193,8 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             $this->warn("Skipping file (" . $langFile . ") because it is empty.");
             return;
         }
+
+        $this->checkForEmptyTranslations($lines, $language, $fileName);
 
         foreach ($this->flatLines($lines) as $index => $line) {
             $this->realLines[$languageDir.$fileName.'**'.$index] = $line;
