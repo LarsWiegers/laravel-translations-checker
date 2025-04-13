@@ -14,7 +14,7 @@ Use the laravel translation checker and get direct feedback where and what trans
 You can install the package via composer:
 
 ```bash
-composer require larswiegers/laravel-translations-checker
+composer require --dev larswiegers/laravel-translations-checker
 ```
 
 ## Usage
