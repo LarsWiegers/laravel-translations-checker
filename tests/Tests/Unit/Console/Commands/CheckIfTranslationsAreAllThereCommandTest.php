@@ -58,6 +58,19 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
     }
 
     /**
+     * @dataProvider one_missing_value_provider
+     *
+     * @return void
+     */
+    public function test_it_fails_if_value_is_empty($directory)
+    {
+        $command = $this->artisan('translations:check', [
+            '--directory' => $directory
+        ]);
+        $command->assertExitCode(1);
+    }
+
+    /**
      * @dataProvider zero_missing_key_provider
      *
      * @return void
@@ -230,6 +243,14 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         return [
             [self::basicDir . 'zero_missing_keys'],
             [self::jsonDir . 'zero_missing_keys'],
+        ];
+    }
+
+    public static function one_missing_value_provider(): array
+    {
+        return [
+            [self::basicDir . 'one_missing_value'],
+            [self::jsonDir . 'one_missing_value'],
         ];
     }
 }

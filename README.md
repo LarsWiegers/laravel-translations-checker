@@ -14,7 +14,7 @@ Use the laravel translation checker and get direct feedback where and what trans
 You can install the package via composer:
 
 ```bash
-composer require larswiegers/laravel-translations-checker
+composer require --dev larswiegers/laravel-translations-checker
 ```
 
 ## Usage
@@ -52,9 +52,17 @@ To exclude languages, follow these steps:
 3. Add the language codes of the languages you want to exclude to the `exclude_languages` field.
 
 For example:
-```
+```php
     exclude_languages = ["en", "fr", "es"]
 ```
+
+### Exclude file types
+1. Let's say you only want to run on the php or json files in your project than you can use the --excludedFileExtensions option like this:
+```php
+php artisan translations:check --excludedFileExtensions=php
+```
+
+This option is also available as configuration option 'excluded_file_extensions'.
 
 ### JSON support
 The package supports both .php files and .json files for the translations.

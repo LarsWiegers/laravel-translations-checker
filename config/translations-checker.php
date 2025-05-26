@@ -32,6 +32,22 @@ return [
     'excluded_directories' => [],
 
     /*
+    |--------------------------------------------------------------------------
+    | Excludes File extensions
+    |--------------------------------------------------------------------------
+    |
+    | This configuration option allows you to exclude specific file extensions from
+    | being processed or checked. The array contains the directory extension that
+    | should be excluded from being scanned. It can be overridden by passing the
+    | command line option "--excludedFileExtensions=...". Pass command line option
+    | "--excludeFileExtensions=none" to not exclude any files ( we still don't include .DS_STORE files ).
+    |
+    | Example: ['php', 'json']
+    |
+    */
+    'excluded_file_extensions' => [],
+
+    /*
    |--------------------------------------------------------------------------
    | Excludes Keys
    |--------------------------------------------------------------------------
