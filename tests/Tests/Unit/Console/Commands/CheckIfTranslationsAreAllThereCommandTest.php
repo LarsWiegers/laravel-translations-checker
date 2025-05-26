@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Console\Commands;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
@@ -15,11 +16,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
     const jsonDir = "tests/resources/lang/json/";
     const multipleLangs  = "tests/resources/lang/multi_langs/";
 
-    /**
-     * @dataProvider one_missing_key_provider
-     *
-     * @return void
-     */
+    #[DataProvider('one_missing_key_provider')]
     public function test_it_returns_errors_if_one_key_is_missing($directory)
     {
         $command = $this->artisan('translations:check', [
@@ -29,11 +26,8 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         $command->expectsOutput('Missing the translation with key: nl.test.test_key');
     }
 
-    /**
-     * @dataProvider two_missing_keys_provider
-     *
-     * @return void
-     */
+    #[DataProvider('two_missing_keys_provider')]
+
     public function test_it_returns_errors_if_multiple_keys_are_missing($directory)
     {
         $command = $this->artisan('translations:check', [
@@ -44,11 +38,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         $command->expectsOutput('Missing the translation with key: nl.test.test_key2');
     }
 
-    /**
-     * @dataProvider one_missing_key_provider
-     *
-     * @return void
-     */
+    #[DataProvider('one_missing_key_provider')]
     public function test_it_fails_if_key_is_missing($directory)
     {
         $command = $this->artisan('translations:check', [
@@ -57,11 +47,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         $command->assertExitCode(1);
     }
 
-    /**
-     * @dataProvider one_missing_value_provider
-     *
-     * @return void
-     */
+    #[DataProvider('one_missing_value_provider')]
     public function test_it_fails_if_value_is_empty($directory)
     {
         $command = $this->artisan('translations:check', [
@@ -70,11 +56,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         $command->assertExitCode(1);
     }
 
-    /**
-     * @dataProvider zero_missing_key_provider
-     *
-     * @return void
-     */
+    #[DataProvider('zero_missing_key_provider')]
     public function test_it_is_successful_if_none_keys_are_missing($directory)
     {
         $command = $this->artisan('translations:check', [
@@ -111,11 +93,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         $command->assertExitCode(0);
     }
 
-    /**
-     * @dataProvider zero_missing_key_provider
-     *
-     * @return void
-     */
+    #[DataProvider('zero_missing_key_provider')]
     public function test_it_returns_an_all_good_message_if_everything_is_good($directory)
     {
         $command = $this->artisan('translations:check', [
@@ -127,11 +105,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         $command->assertExitCode(0);
     }
 
-    /**
-     * @dataProvider zero_missing_key_provider
-     *
-     * @return void
-     */
+    #[DataProvider('zero_missing_key_provider')]
     public function test_we_can_exclude_an_directory($directory)
     {
         $command = $this->artisan('translations:check', [
@@ -144,11 +118,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
         $command->assertExitCode(0);
     }
 
-    /**
-     * @dataProvider zero_missing_key_provider
-     *
-     * @return void
-     */
+    #[DataProvider('zero_missing_key_provider')]
     public function test_we_can_exclude_two_directories($directory)
     {
         $command = $this->artisan('translations:check', [

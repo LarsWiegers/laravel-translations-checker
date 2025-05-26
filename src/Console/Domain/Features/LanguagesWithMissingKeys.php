@@ -30,6 +30,7 @@ class LanguagesWithMissingKeys
         foreach ($realLines as $line) {
 
             foreach ($languages as $language) {
+
                 if (LanguageExclusion::shouldExcludeLanguage($language)) {
                     continue;
                 }
@@ -46,10 +47,10 @@ class LanguagesWithMissingKeys
                     ->translationExistChecker
                     ->translationExistsAsJsonOrAsSubDir($realLines, $line, $language);
 
-                if ($exists) {
+
+                if ($exists && $realLines[$line->getIDButSwapLanguage($language)]->getValue() !== '' && $realLines[$line->getIDButSwapLanguage($language)]->getValue() !== ' ') {
                     continue;
                 }
-
 
 
                 if (KeyExclusion::shouldExclude($line)) {
@@ -58,7 +59,6 @@ class LanguagesWithMissingKeys
 
                 $file = new File($fileKey);
                 $fileName = $file->withoutExtensionAndLanguages($languages);
-
                 if (Str::contains($fileKey, $languages)) {
                     $this->missingKeysTexts[] = $language.'.'.$keyWithoutFile;
                 } else {
