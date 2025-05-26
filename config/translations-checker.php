@@ -46,4 +46,24 @@ return [
     |
     */
     'excluded_file_extensions' => [],
+
+    /*
+   |--------------------------------------------------------------------------
+   | Excludes Keys
+   |--------------------------------------------------------------------------
+   |
+   | This configuration option allows you to exclude specific keys from
+   | being processed or checked. The array contains the path inside the translation file that
+   | should be excluded from being scanned. It can be overridden by passing the
+   | command line option "--excludedKeys=...". Pass command line option
+   | "--excludedKeys=none" to not exclude any keys.
+   |
+   | Example: [
+   |  'test.existing_key',
+   | ]
+   |
+   */
+    'excluded_keys' => [],
+
+    'translation_service' => 'http://localhost:5000'
 ];
