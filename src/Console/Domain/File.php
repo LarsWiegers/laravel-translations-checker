@@ -82,6 +82,11 @@ class File
         return Str::replace(['.php', '.json'], '', $this->fileName);
     }
 
+    public function getExtension(): string
+    {
+        return Str::contains($this->fileName, '.php') ? 'php' : 'json';
+    }
+
     /**
      * @param  array<string>  $languages
      */

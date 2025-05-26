@@ -50,6 +50,8 @@ class LanguagesWithMissingKeys
                     continue;
                 }
 
+
+
                 if (KeyExclusion::shouldExclude($line)) {
                     continue;
                 }

@@ -26,6 +26,10 @@ class LanguagesWithMissingFiles
                 continue;
             }
 
+            if (ExtensionExclusion::shouldExcludeExtension($file)) {
+                continue;
+            }
+
             if (in_array($languageWithMissingFile, self::EXCLUDE_MAC_FILES)) {
                 continue;
             }

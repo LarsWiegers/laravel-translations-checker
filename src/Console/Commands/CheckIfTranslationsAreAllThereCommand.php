@@ -5,6 +5,7 @@ namespace Larswiegers\LaravelTranslationsChecker\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File as FileFacade;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\DirectoryExclusion;
+use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\ExtensionExclusion;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\GetLanguages;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\KeyExclusion;
 use Larswiegers\LaravelTranslationsChecker\Console\Domain\Features\LanguagesWithMissingFiles;
@@ -21,7 +22,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'translations:check {--directory=} {--excludedDirectories=config} {--excludedKeys=config}';
+    protected $signature = 'translations:check {--directory=} {--excludedDirectories=config} {--excludedFileExtensions=config} {--excludedKeys=config}';
 
     /**
      * The console command description.
@@ -68,6 +69,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
         }
 
         DirectoryExclusion::getExcludedDirectories($this->options());
+        ExtensionExclusion::getExcludedExtensions($this->options());
         KeyExclusion::getExcludedKeys($this->options());
 
         $languages = $this->getLanguages->getLanguages($topDirectory);
@@ -87,6 +89,12 @@ class CheckIfTranslationsAreAllThereCommand extends Command
              * Exclusion feature
              */
             if (DirectoryExclusion::shouldExcludeDirectory($file->getLanguageDir())) {
+                continue;
+            }
+            /**
+             * Exclusion feature
+             */
+            if (ExtensionExclusion::shouldExcludeExtension($file)) {
                 continue;
             }
 
