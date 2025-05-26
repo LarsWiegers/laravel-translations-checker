@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Illuminate\Foundation\Bootstrap\HandleExceptions;
 use Larswiegers\LaravelTranslationsChecker\LaravelTranslationsCheckerServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
