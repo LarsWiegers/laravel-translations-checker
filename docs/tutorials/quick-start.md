@@ -13,7 +13,7 @@ Use the **laravel translation checker** and get direct feedback where and what t
 You can install the package via composer:
 
 ```bash
-composer require larswiegers/laravel-translations-checker
+composer require larswiegers/laravel-translations-checker --dev
 ```
 
 ## Usage
