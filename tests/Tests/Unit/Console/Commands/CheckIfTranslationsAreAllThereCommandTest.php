@@ -13,6 +13,7 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
     const basicDir = "tests/resources/lang/basic/";
     const jsonDir = "tests/resources/lang/json/";
     const multipleLangs  = "tests/resources/lang/multi_langs/";
+    const nestedDir = "tests/resources/lang/nested/";
 
     /**
      * @dataProvider one_missing_key_provider
@@ -194,6 +195,35 @@ final class CheckIfTranslationsAreAllThereCommandTest extends TestCase
             '--directory' => self::jsonDir . 'toplevel_json_files/slashes_in_title',
         ]);
 
+        $command->assertExitCode(0);
+    }
+
+    public function test_it_handles_nested_subdirectories_without_errors()
+    {
+        $command = $this->artisan('translations:check', [
+            '--directory' => self::nestedDir . 'zero_missing_keys',
+        ]);
+
+        $command->assertExitCode(0);
+    }
+
+    public function test_it_detects_missing_files_in_nested_subdirectories()
+    {
+        $command = $this->artisan('translations:check', [
+            '--directory' => self::nestedDir . 'one_missing_file',
+        ]);
+
+        $command->expectsOutput('The language nl (tests/resources/lang/nested/one_missing_file/nl) is missing the file ( test/test.php )');
+        $command->assertExitCode(1);
+    }
+
+    public function test_it_handles_deeper_nested_subdirectories()
+    {
+        $command = $this->artisan('translations:check', [
+            '--directory' => self::nestedDir . 'deeper_nesting',
+        ]);
+
+        $command->expectsOutput('✔ All translations are okay!');
         $command->assertExitCode(0);
     }
 

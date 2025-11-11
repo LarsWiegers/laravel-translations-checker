@@ -95,7 +95,14 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                 $fileName = basename($langFile);
                 $languageDir = Str::replace($fileName, '', $langFile);
 
-                $languagesWithMissingFile = $this->checkIfFileExistsForOtherLanguages($languages, $fileName, $directory);
+                // Extract the relative path from the base directory including subdirectories
+                $relativePath = Str::after($langFile, $directory . DIRECTORY_SEPARATOR);
+                // Extract language code (first directory after base)
+                $languageCode = Str::before($relativePath, DIRECTORY_SEPARATOR);
+                // Get the relative file path after the language directory
+                $relativeFilePath = Str::after($relativePath, $languageCode . DIRECTORY_SEPARATOR);
+
+                $languagesWithMissingFile = $this->checkIfFileExistsForOtherLanguages($languages, $relativeFilePath, $directory);
 
                 if ($this->isDirInExcludedDirectories($languageDir)) {
                     continue;
@@ -110,7 +117,7 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                         continue;
                     }
 
-                    $missingFiles[] = 'The language ' . $languageWithMissingFile . ' (' . $directory . '/' . $languageWithMissingFile . ') is missing the file ( ' . $fileName . ' )';
+                    $missingFiles[] = 'The language ' . $languageWithMissingFile . ' (' . $directory . '/' . $languageWithMissingFile . ') is missing the file ( ' . $relativeFilePath . ' )';
 				}
                 $this->handleFile($languageDir, $langFile);
             }
@@ -123,7 +130,10 @@ class CheckIfTranslationsAreAllThereCommand extends Command
             foreach ($languages as $language) {
 
                 $fileNameWithoutKey = substr($key, 0, strpos($key, "**"));
-				$fileKey = basename($fileNameWithoutKey);
+				// Extract the relative path preserving subdirectory structure (e.g., "filament/pages.php")
+				$afterDirectory = Str::after($fileNameWithoutKey, $directory . DIRECTORY_SEPARATOR);
+				$languageCode = Str::before($afterDirectory, DIRECTORY_SEPARATOR);
+				$fileKey = Str::after($afterDirectory, $languageCode . DIRECTORY_SEPARATOR);
                 $keyWithoutFile = substr($key, strpos($key, "**") + 2, strlen($key));
 
 				$exists = $this->translationExistsAsJsonOrAsSubDir($directory, $language, $fileKey, $keyWithoutFile);
@@ -132,7 +142,9 @@ class CheckIfTranslationsAreAllThereCommand extends Command
                     continue;
                 }
                 if (!$exists) {
+                    // Convert file path to dot notation (e.g., "filament/widgets.php" -> "filament.widgets")
                     $fileName = Str::replace(['.php', '.json'], '', $fileKey);
+                    $fileName = str_replace(DIRECTORY_SEPARATOR, '.', $fileName);
 
                     if(in_array($language, self::EXCLUDE_MAC_FILES)) {
                         continue;
@@ -235,17 +247,17 @@ class CheckIfTranslationsAreAllThereCommand extends Command
 
     /**
      * @param $languages
-     * @param $fileName
+     * @param $relativeFilePath
      * @param $baseDirectory
      * @return array
      */
-    private function checkIfFileExistsForOtherLanguages($languages, $fileName, $baseDirectory): array
+    private function checkIfFileExistsForOtherLanguages($languages, $relativeFilePath, $baseDirectory): array
     {
         $languagesWhereFileIsMissing = [];
         foreach ($languages as $language) {
             if (
-                !File::exists($baseDirectory . '/' . $language .  '/' . $fileName)
-                && !File::exists($baseDirectory . '/' . $fileName)
+                !File::exists($baseDirectory . '/' . $language .  '/' . $relativeFilePath)
+                && !File::exists($baseDirectory . '/' . $relativeFilePath)
             ) {
                 $languagesWhereFileIsMissing[] = $language;
             }
